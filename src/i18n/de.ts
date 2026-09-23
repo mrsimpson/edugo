@@ -12,7 +12,7 @@ export const de = {
   nav: {
     brand: 'edugo',
     catalog: 'Kompetenzkatalog',
-    apps: 'Tool-Registry',
+    apps: 'Apps',
     github: 'GitHub',
   },
 
@@ -75,7 +75,7 @@ export const de = {
 
   // ── Registry ───────────────────────────────────────────────────────────────
   registry: {
-    pageTitle: 'Tool-Registry',
+    pageTitle: 'Apps',
     listAriaLabel: 'Registry-Einträge',
     filterPanelAriaLabel: 'Registry filtern',
     filterDsgvoHeading: 'Datenschutz (DSGVO)',
@@ -101,7 +101,7 @@ export const de = {
 
   // ── Registry entry detail ──────────────────────────────────────────────────
   registryDetail: {
-    backLabel: 'Tool-Registry',
+    backLabel: 'Apps',
     entityName: 'Tool',
     capabilitiesSectionTitle: 'Adressierte Kompetenzen',
     bodyAriaLabel: 'Beschreibung des Tools',

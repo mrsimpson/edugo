@@ -287,7 +287,7 @@ The Vue app uses `createWebHashHistory('/edugo/')` instead of `createWebHistory`
 The landing page is `LandingView.vue` at hash route `/` in the Vue SPA (deployed at `app.html`). The VitePress site remains at the repo root and serves the README and docs. This keeps a single styling system (UnoCSS) and a single deploy artifact. VitePress SSG would have required a separate custom theme and two styling contexts.
 
 ### KD-36: Route rename — /catalog and /apps replace /map and /registry
-`/catalog` replaces `/map` (capability catalog/Kompetenzkatalog), `/apps` replaces `/registry` (Tool-Registry). More intuitive for both personas. Legacy redirects added initially were subsequently removed — no backward compatibility needed at this stage.
+`/catalog` replaces `/map` (capability catalog/Kompetenzkatalog), `/apps` replaces `/registry` (Apps). More intuitive for both personas. Legacy redirects added initially were subsequently removed — no backward compatibility needed at this stage.
 
 ### KD-40: de.ts is the single source for all user-visible strings
 Extended `src/i18n/de.ts` to cover all UI sections: `common`, `status`, `catalog`, `catalogDetail`, `registry`, `registryDetail`, `landing`. Every component imports `{ de as t }` and reads from it. No German string may be hardcoded in a template. Function-valued entries handle pluralisation and interpolation in the copy file, keeping templates logic-free. Adding a second locale requires only a new file with the same shape — zero template changes.
@@ -314,7 +314,7 @@ Landing page uses a tabbed card pattern (not separate sections) for the three st
 - [x] **M4-5** Build passes (335KB JS, 36KB CSS gzipped to 111KB/6KB) — no external runtime, no CDN fonts
 - [x] **M4-6** DSGVO audit: zero external requests in built output (no CDN fonts, no analytics, no third-party scripts); footer note confirms this
 - [x] **M4-7** i18n: all hardcoded strings moved to `de.ts`; legacy redirects removed
-- [ ] **M4-8** Accessibility audit: WCAG 2.1 AA structural check; heading hierarchy, aria-labels, keyboard navigation
+- [x] **M4-8** Accessibility audit: WCAG 2.1 AA structural check; heading hierarchy, aria-labels, keyboard navigation — skip link, tabindex/arrow nav on persona tabs, h2/h3 hierarchy, aria-hidden decoratives, hero contrast improved, marked replaces regex renderer, UnoCSS typography preset added
 
 ### Completed
 - [x] M0: Deployment pipeline (2026-09-23)
