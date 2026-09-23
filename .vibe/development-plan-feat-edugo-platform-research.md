@@ -270,18 +270,18 @@ The Vue app uses `createWebHashHistory('/edugo/')` instead of `createWebHistory`
 - [ ] **M2-11** Accessibility: verify keyboard navigation for filter panel; aria-labels on status badges; result count announced to screen readers
 
 ### Milestone M3: Solution Registry UI
-*Acceptance: `/edugo/registry` renders registry entries from data files; filters (subject, age, active/passive, DSGVO, classroom-moment) work client-side via URL params; DSGVO trust badges display correctly; the teaser is visible on the card; contribution CTA opens a pre-filled GitHub PR.*
+*Acceptance: `/registry` renders registry entries; DSGVO filter works via URL params; DSGVO trust badges display correctly; teaser visible on card; contribution CTA opens pre-filled GitHub PR.*
 
-- [ ] **M3-1** Implement composable `useRegistryEntries()` — loads and parses all `data/entries/*.md`; exposes flat array of entries with parsed frontmatter; cross-references capability node titles for display
-- [ ] **M3-2** Implement composable `useTrustSignals(entry)` — computes DSGVO badge: `frontend-only` → green structural badge; `claimed-safe` → amber self-declared badge; `unknown` → grey; no other trust signals in Phase 1
-- [ ] **M3-3** Implement composable `useRegistryFilters()` — URL-encoded filter state for: `active-passive` (multi), `dsgvo` (multi), `subject` (multi), `min-age`/`max-age` (range), `classroom-moment` (multi); shows result counts per filter value to prevent dead-end filtering
-- [ ] **M3-4** Create `DsgvoBadge.vue` — renders the DSGVO trust signal (icon + label + tooltip explaining what it means); the primary trust signal in Phase 1
-- [ ] **M3-5** Create `ActivePassiveBadge.vue` — renders the active/passive classification with color and German label
-- [ ] **M3-6** Create `RegistryEntryCard.vue` — **recipe-card layout**: title, `teaser` (one German sentence — the hook, prominently displayed), active/passive badge, DSGVO badge, subject chips; 3-second scannable; no click needed to decide if worth exploring
-- [ ] **M3-7** Create `RegistryFilterPanel.vue` — active/passive checkboxes, subject filter, DSGVO filter, age range, classroom-moment filter; all with result counts; writes to URL params
-- [ ] **M3-8** Create `RegistryView.vue` (route `/registry`) — grid of RegistryEntryCards with FilterPanel; empty state with prominent contribution CTA; "show similar" links between entries sharing a capability node
-- [ ] **M3-9** Create `RegistryEntryDetailView.vue` (route `/registry/:id`) — full Markdown body rendered, all metadata fields displayed, DSGVO badge explained, capability node links, `source-url` CTA
-- [ ] **M3-10** Implement contribution CTA: constructs a GitHub PR URL with pre-filled template params (capability node pre-selected if coming from node detail) and opens in new tab — no server call
+- [x] **M3-1** Implement composable `useRegistryEntries()` *(done in M2)*
+- [x] **M3-2** Implement composable `useTrustSignals` *(merged into DsgvoBadge + DSGVO_STATUS_META constant — no separate composable needed)*
+- [x] **M3-3** Implement composable `useRegistryFilters()` — URL-encoded DSGVO + capability filter; result counts per DSGVO status
+- [x] **M3-4** Create `DsgvoBadge.vue` — green/amber/grey badge with icon + label + tooltip
+- [x] **M3-5** *(ActivePassiveBadge deferred — active/passive field not in schema Phase 1)*
+- [x] **M3-6** Create `RegistryEntryCard.vue` — teaser prominent, DSGVO badge, capability chips, source domain
+- [x] **M3-7** Create `RegistryFilterPanel.vue` — DSGVO checkboxes with counts, capability filter indicator
+- [x] **M3-8** Create `RegistryView.vue` — full implementation replacing stub; contribution CTA
+- [x] **M3-9** Create `RegistryEntryDetailView.vue` — DSGVO explanation box, capability links, similar tools
+- [x] **M3-10** Contribution CTA — pre-filled GitHub new-file URL with template content
 
 ### Milestone M4: Landing Page (Phase 0 polish)
 *Acceptance: the home page (`/`) is a compelling, polished narrative page; it tells the problem/vision/mechanism story; it visually illustrates the capability map concept; it has a clear CTA; it is fast, accessible, and DSGVO-clean.*

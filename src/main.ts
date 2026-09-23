@@ -5,6 +5,7 @@ import App from './App.vue'
 import CapabilityMapView from './views/CapabilityMapView.vue'
 import CapabilityNodeDetailView from './views/CapabilityNodeDetailView.vue'
 import RegistryView from './views/RegistryView.vue'
+import RegistryEntryDetailView from './views/RegistryEntryDetailView.vue'
 
 const router = createRouter({
   history: createWebHashHistory('/edugo/'),
@@ -13,6 +14,7 @@ const router = createRouter({
     { path: '/map', component: CapabilityMapView },
     { path: '/map/:id', component: CapabilityNodeDetailView },
     { path: '/registry', component: RegistryView },
+    { path: '/registry/:id', component: RegistryEntryDetailView },
   ],
 })
 
