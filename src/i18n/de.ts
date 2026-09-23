@@ -46,6 +46,8 @@ export const de = {
     filterKmkHeading: 'KMK-Kompetenzbereich',
     filterKmkAriaLabel: 'KMK-Kompetenzbereiche filtern',
     filterKmkDomainAriaLabel: (title: string, count: number) => `${title} (${count} Kompetenzen)`,
+    filterKmkSourceUrl: 'https://www.kmk.org/themen/bildung-in-der-digitalen-welt/strategie-bildung-in-der-digitalen-welt.html',
+    filterKmkSourceLabel: 'KMK Strategie „Bildung in der digitalen Welt" (2016)',
     resultCount: (filtered: number, total: number) => `${filtered} von ${total} Kompetenzen`,
     resultCountFiltered: 'gefiltert',
     resultLiveAnnouncement: (count: number) => `${count} Kompetenzen werden angezeigt`,

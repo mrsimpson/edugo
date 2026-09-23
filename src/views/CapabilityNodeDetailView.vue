@@ -40,7 +40,7 @@
         <!-- KMK domain tags -->
         <div
           v-if="node['kmk-domains']?.length"
-          class="mt-3 flex flex-wrap gap-2"
+          class="mt-3 flex flex-wrap items-center gap-2"
           :aria-label="t.catalog.filterKmkHeading"
         >
           <span
@@ -50,6 +50,13 @@
           >
             KMK {{ domainMeta(domain)?.number }} · {{ domainMeta(domain)?.title }}
           </span>
+          <a
+            :href="t.catalog.filterKmkSourceUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs text-blue-500 hover:text-blue-700 ml-1"
+            :title="t.catalog.filterKmkSourceLabel"
+          >{{ t.catalog.filterKmkSourceLabel }} ↗</a>
         </div>
       </div>
 

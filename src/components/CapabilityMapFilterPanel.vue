@@ -33,6 +33,14 @@
     <div>
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
         {{ t.catalog.filterKmkHeading }}
+        <a
+          :href="t.catalog.filterKmkSourceUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-1 font-normal normal-case text-blue-500 hover:text-blue-700"
+          :aria-label="t.catalog.filterKmkSourceLabel"
+          :title="t.catalog.filterKmkSourceLabel"
+        >↗</a>
       </h3>
       <div
         role="group"
