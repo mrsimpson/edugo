@@ -113,7 +113,37 @@ The JSON Schema rule: `patternProperties: { "^x-": {} }` combined with `addition
 
 Schema files are versioned in their filename: `schemas/registry-entry.v1.schema.json`. The validator always uses the current version. Breaking changes (removing or renaming a required field) increment the version and require a migration PR that updates all existing entries. Additive changes (new optional fields) do not increment the version.
 
-### 2.8 Capability node identity
+### 2.8 Controlled vocabularies: Zod is the source, JSON Schema is the artifact
+
+Platform-owned vocabularies (DSGVO status) live in `data/taxonomies/*.yaml` and are referenced by the Zod schema at build time.
+
+External reference data from stable external authorities (KMK domains) is defined **directly in the Zod schema** using `.meta()` annotations — not in a YAML file. There are exactly 6 KMK domains, defined by a published government document; they will not change. Storing them in a YAML file adds indirection with no benefit.
+
+The full schema pipeline:
+1. **Source**: `schemas/capability-node.ts`, `schemas/registry-entry.ts` — Zod v4 schemas; TypeScript types inferred from them via `z.infer<>`
+2. **Generate**: `npm run generate-schemas` runs `zod-to-json-schema` → produces `schemas/generated/capability-node.v1.schema.json` and `schemas/generated/registry-entry.v1.schema.json`
+3. **Commit**: generated JSON Schema files are committed to the repo — they are distribution artifacts, not build outputs to ignore
+4. **Validate**: CI runs `ajv` against the generated JSON Schema on every PR touching `data/`
+5. **Publish**: generated JSON Schemas are included in the GitHub Pages deploy under `/schemas/` for remote `$schema` references
+6. **Editor**: `.vscode/settings.json` associates `data/capabilities/*.md` and `data/entries/*.md` with the local generated schemas — contributors get live YAML frontmatter validation in VS Code without file-level `$schema` comments
+
+**Defect signal:** if the generated JSON Schema is out of sync with the Zod source, the CI `--check` flag fails the build.
+
+### 2.9 KMK domains use slugs, not numbers
+
+KMK domain values in YAML frontmatter are lowercase hyphen-separated slugs — not integers. `problemloesen-handeln` is self-documenting in the file; `5` is not. The display number ("KMK 5") is stored in the Zod `.meta()` annotation and used only in the UI — it is never in the data files.
+
+The six slug values (validated by the Zod enum):
+- `suchen-verarbeiten` — Suchen, Verarbeiten und Aufbewahren
+- `kommunizieren-kooperieren` — Kommunizieren und Kooperieren
+- `produzieren-praesentieren` — Produzieren und Präsentieren
+- `schuetzen-agieren` — Schützen und sicher Agieren
+- `problemloesen-handeln` — Problemlösen und Handeln
+- `analysieren-reflektieren` — Analysieren und Reflektieren
+
+**Defect signal:** if a KMK domain value in a YAML file is a number or a free-text string not matching one of these slugs, schema validation fails.
+
+### 2.10 Capability node identity
 
 A capability node's `id` is its slug: lowercase, hyphen-separated, English, unique across `data/capabilities/`. It is permanent. Deprecation uses `deprecated: true` + `replaced-by` — never file deletion.
 
@@ -185,8 +215,9 @@ Schema validation on PRs (touching `data/`) is a separate workflow from the buil
 
 - Capability node files: `data/capabilities/{id}.md` — slug is the canonical identifier
 - Registry entry files: `data/entries/{id}.md` — slug is the canonical identifier
-- Taxonomy files: `data/taxonomies/{name}.yaml` — name is the taxonomy type (e.g. `active-passive`, `dsgvo-status`)
-- JSON Schema files: `schemas/{type}.schema.json` — type matches the data directory name
+- Taxonomy files: `data/taxonomies/{name}.yaml` — platform-owned vocabularies only (e.g. `dsgvo-status.yaml`); external reference data lives in Zod schemas, not YAML files
+- Zod schema sources: `schemas/{type}.ts` — the edit target; TypeScript types inferred from these
+- Generated JSON Schemas: `schemas/generated/{type}.v1.schema.json` — committed artifacts; produced by `npm run generate-schemas`; never edited directly
 - Vue components: `src/components/{PascalCase}.vue` — named for the concept, not the view
 - Composables: `src/composables/use{Concept}.ts` — always prefixed with `use`
 - VitePress config: `docs/.vitepress/config.ts` — no alternative location
@@ -209,39 +240,41 @@ Feature branches: `feat/{short-description}`. Fix branches: `fix/{short-descript
 
 ### Add a new capability node
 
-1. Create `data/capabilities/{new-id}.md` with required YAML frontmatter (validated by schema on PR).
+1. Create `data/capabilities/{new-id}.md` with required YAML frontmatter (validated by generated JSON Schema on PR).
 2. Write the German title and a rich Markdown body: what this outcome means, why it matters, example learning scenarios.
 3. Set `status: needed` initially — coverage updates as entries are linked.
-4. Tag with applicable facets: `kmk-domains` (multi-value), `subjects` (multi-value), `min-age`, `active-passive`.
-5. No code changes required. No placement decision required — there is no tree.
+4. Set `kmk-domains` to one or more slug values from the Zod `KmkDomain` enum.
+5. No code changes required.
 
 ### Add a new registry entry
 
 1. Create `data/entries/{tool-id}.md` with required YAML frontmatter.
 2. Reference one or more capability node IDs in the `capabilities` field.
-3. The UI automatically surfaces the entry in the registry and on the relevant capability node pages.
-4. No code changes required.
+3. Add a `teaser` (one German sentence) — optional but strongly encouraged.
+4. The UI automatically surfaces the entry in the registry and on the relevant capability node pages.
+5. No code changes required.
 
 ### Add a new trust signal type
 
-1. Define the signal in `schemas/registry-entry.schema.json` as an optional field.
-2. Add the signal to the taxonomy file if it has controlled vocabulary values.
-3. Add a renderer to the `useTrustSignals` composable.
+1. Add the field to `schemas/registry-entry.ts` (Zod schema) as an optional field with `.meta()` description.
+2. Run `npm run generate-schemas` to update the generated JSON Schema.
+3. Add the renderer to the `useTrustSignals` composable.
 4. Add a badge component or update the existing trust signal component.
 5. Do not add signal logic to the entry card component directly.
 
+### Add a new platform-owned vocabulary (e.g. future active/passive taxonomy)
+
+1. Create `data/taxonomies/{name}.yaml` with a `values` array.
+2. Add the enum to the relevant Zod schema file, reading values from the YAML at build time.
+3. Run `npm run generate-schemas` to regenerate JSON Schemas.
+4. Update the relevant filter composable.
+5. No component changes unless a new filter UI element is needed.
+
 ### Add a new capability map view (projection)
 
-1. Create a composable `useCapabilityMapProjection{Name}.ts` that transforms the loaded nodes array into the shape the view needs.
-2. Create a view component (a route-level component in `src/views/`) that uses the composable.
+1. Create a composable `useCapabilityMapProjection{Name}.ts` that transforms the loaded nodes array.
+2. Create a view component in `src/views/` that uses the composable.
 3. Add the route to Vue Router config.
-4. No data model changes required unless the projection reveals a missing data field.
-
-### Add a new taxonomy vocabulary
-
-1. Create `data/taxonomies/{name}.yaml` with a `values` array of vocabulary items.
-2. Update the relevant JSON Schema to reference the new vocabulary as an `enum`.
-3. Update the filter composable to expose the new vocabulary as a filter dimension.
-4. No component changes unless a new filter UI element is needed.
+4. No data model or schema changes required.
 
 

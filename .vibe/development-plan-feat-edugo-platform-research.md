@@ -193,14 +193,11 @@ Seed strategy: 6–10 real learning outcomes spanning at least 3 subjects, 2 age
 ### KD-20: Filter State in URL
 All active filter state (kmk-domain, DSGVO status, gap-only toggle) is encoded as URL query parameters. Filtered views are bookmarkable and shareable. The gap view is a named filter preset (`?gap=true`), not a separate route. Filter composable reads from and writes to `useRoute()` / `useRouter()`.
 
-### KD-24: Active/Passive Classification Deferred to Future Phase
-Dropped as a required or optional schema field for Phase 1. The capability node description already conveys what students will be doing — a tool that claims to address "Students develop probabilistic intuition through simulation" is by definition active. Explicit active/passive classification adds contributor friction for marginal discovery gain in Phase 1. Added to requirements as a named future capability for when filtering by engagement type becomes a real user need.
+### KD-27: Zod v4 as Schema Source; Generated JSON Schema as Distribution Artifact
+Zod v4 is the single source of truth for all data schemas. TypeScript types are inferred from Zod schemas via `z.infer<>`. JSON Schema files are generated via `zod-to-json-schema` and committed to the repo under `schemas/generated/`. These serve three consumers: (1) CI `ajv` validation on PRs touching `data/`, (2) editor YAML frontmatter validation via `.vscode/settings.json` schema associations, (3) published remote `$schema` references at `/schemas/` on GitHub Pages. The CI build fails if generated files are out of sync with the Zod source (`--check` flag). KMK domains are defined as Zod literal slugs with `.meta()` annotations (title, number) — not in a YAML file. All vocabulary slugs (not numbers) in YAML: `problemloesen-handeln`, not `5`. Platform-owned vocabularies that may evolve (DSGVO status) remain in `data/taxonomies/*.yaml`.
 
-### KD-25: Schema Extensibility via `x-` Prefix + Additive Evolution
-All fields beyond the 3-field minimum (`id`, `title`, `capabilities`) are optional. Extension fields prefixed with `x-` are always permitted by the schema and ignored by the platform UI — contributors can experiment with new fields without schema changes or PRs to the schema. Graduation path: when an `x-` field proves broadly useful, a PR adds it as a named optional field. Schema files versioned in filename (`v1`, `v2`) — version bumps only for breaking changes (removal/rename of required fields). Additive changes never require a version bump.
-
-### KD-26: KMK Tagging is Maintainer Work, Not Contributor Work
-`kmk-domains` is an optional multi-value facet on capability nodes. It is populated by platform maintainers — not required from contributors. Contributors write a German outcome description; maintainers add the KMK alignment tags. This keeps contribution friction minimal while ensuring KMK accuracy. KMK sub-competency detail (~40 sub-competencies) is a future refinement targeting school directors and Schulaufsicht — added to requirements as a named future capability.
+### KD-28: kmk-domains Required on Capability Nodes, Slug Values
+`kmk-domains` is a required field on capability nodes (array, minItems: 1). Contributors must select at least one of 6 slug values. Six slugs, 30-second decision with the PR template description — not burdensome. The display number ("KMK 5") comes from Zod `.meta()` and is never stored in data files. Multi-value to handle outcomes that genuinely span domains.
 
 ### Completed
 - [x] Plan phase completed (2026-09-23)
@@ -234,30 +231,32 @@ All fields beyond the 3-field minimum (`id`, `title`, `capabilities`) are option
 ### Milestone M1: Data Foundations
 *Acceptance: `data/` directory structure exists with schemas and seed data; schema validation CI workflow passes on a correct PR and fails on a malformed PR; a contributor can understand what to submit by reading `docs/contributing.md`.*
 
-#### Taxonomies (controlled vocabularies — flat YAML files)
-- [ ] **M1-1** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only` (no backend, structurally safe), `claimed-safe` (contributor-asserted), `unknown` (default); German labels + one-line explanation of what each means in practice
-- [ ] **M1-2** Create `data/taxonomies/kmk-domains.yaml` — 6 KMK Kompetenzrahmen domains; each with `id` (slug), `number` (1–6), `title` (full German), `short` (one-word German label for UI chips)
+#### Taxonomies (platform-owned controlled vocabularies — YAML files)
+- [ ] **M1-1** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only`, `claimed-safe`, `unknown`; German labels + one-line explanation. Referenced by `schemas/registry-entry.ts` at build time.
+- [ ] **M1-2** *(KMK domains are NOT a YAML file — defined as Zod literal slugs with `.meta()` in `schemas/capability-node.ts`)*
 
-#### Schemas (JSON Schema v1 — validate YAML frontmatter on PR)
-- [ ] **M1-3** Create `schemas/capability-node.v1.schema.json`:
-  - Required: `id` (slug pattern), `title` (non-empty German string), `status` (enum: `needed`/`partial`/`well-covered`)
-  - Optional: `kmk-domains` (array of kmk-domain ids — maintainer-populated, not required from contributors)
-  - Extension: `patternProperties: { "^x-": {} }` + `additionalProperties: false` for all other fields
-- [ ] **M1-4** Create `schemas/registry-entry.v1.schema.json`:
-  - Required: `id` (slug pattern), `title` (non-empty string), `capabilities` (array, minItems: 1, items reference capability node ids)
-  - Optional: `dsgvo` (enum from dsgvo-status vocabulary, defaults to `unknown`), `teaser` (string, max 200 chars), `source-url` (URI format)
-  - Extension: `patternProperties: { "^x-": {} }` + `additionalProperties: false` for all other fields
-  - No `active-passive` field — deferred; capability node description conveys student engagement implicitly
+#### Schemas (Zod v4 source → generated JSON Schema)
+- [ ] **M1-3** Add `zod`, `zod-to-json-schema` as devDependencies; add `generate-schemas` npm script that runs `tsx schemas/generate.ts` producing `schemas/generated/capability-node.v1.schema.json` and `schemas/generated/registry-entry.v1.schema.json`; add `check-schemas` script that fails if generated files are out of sync
+- [ ] **M1-4** Create `schemas/capability-node.ts` (Zod v4):
+  - `KmkDomain` union of 6 string literals with `.meta({ title, number })` — slugs: `suchen-verarbeiten`, `kommunizieren-kooperieren`, `produzieren-praesentieren`, `schuetzen-agieren`, `problemloesen-handeln`, `analysieren-reflektieren`
+  - `CapabilityNodeSchema`: required `id` (slug pattern), `title` (non-empty string), `status` (enum: `needed`/`partial`/`well-covered`), `kmk-domains` (array of KmkDomain, minLength 1); `.catchall(z.unknown())` for `x-` extension fields
+  - Export `type CapabilityNode = z.infer<typeof CapabilityNodeSchema>`
+- [ ] **M1-5** Create `schemas/registry-entry.ts` (Zod v4):
+  - `DsgvoStatus` enum: `frontend-only` / `claimed-safe` / `unknown` with `.meta()` descriptions
+  - `RegistryEntrySchema`: required `id`, `title`, `capabilities` (array min 1 string); optional `dsgvo` (DsgvoStatus, default `unknown`), `teaser` (string max 200), `source-url` (url string); `.catchall(z.unknown())`
+  - Export `type RegistryEntry = z.infer<typeof RegistryEntrySchema>`
+- [ ] **M1-6** Create `schemas/generate.ts` — generates both JSON Schemas via `zod-to-json-schema`, writes to `schemas/generated/`, supports `--check` flag to fail if output differs from committed files
+- [ ] **M1-7** Add `.vscode/settings.json` with `yaml.schemas` associations: `schemas/generated/capability-node.v1.schema.json` → `data/capabilities/*.md`, `schemas/generated/registry-entry.v1.schema.json` → `data/entries/*.md`
 
 #### Seed data (spanning 3 subjects, 2 age bands, varied cognitive types)
-- [ ] **M1-5** Create 6–8 capability node files under `data/capabilities/` — derive from real tool examples (argument evaluation, probabilistic reasoning via simulation, collaborative text production, peer feedback, computational thinking, media production). German titles, rich Markdown bodies explaining what students learn and why it matters. Required fields only (`id`, `title`, `status: needed`). `kmk-domains` tags added by maintainer after creation.
-- [ ] **M1-6** Create 2 illustrative registry entry files under `data/entries/` as contributor reference examples — the essay-comparison critical thinking app and the Yahtzee probabilistics app, described as realistic entries with `teaser` and `source-url` filled in. Markdown body includes a classroom scenario.
+- [ ] **M1-8** Create 6–8 capability node files under `data/capabilities/` — derive from real tool examples (argument evaluation, probabilistic reasoning via simulation, collaborative text production, peer feedback, computational thinking, media production). Required: `id`, `title`, `status: needed`, `kmk-domains` (1+ slug values). Rich Markdown body. Seed set must span at least 3 different KMK domains so the domain filter is meaningful from day one.
+- [ ] **M1-9** Create 2 illustrative registry entry files under `data/entries/` as contributor reference examples — the essay-comparison critical thinking app and the Yahtzee probabilistics app. Include `teaser` (one German sentence), `dsgvo`, `source-url`, and a Markdown body with classroom scenario.
 
 #### CI validation and contribution flow
-- [ ] **M1-7** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/**`; uses `ajv-cli` with `--spec draft2020` to validate changed files against their schema (detected by path: `data/capabilities/` → capability-node schema, `data/entries/` → registry-entry schema); fails PR with readable error output; runs without Pages permissions
-- [ ] **M1-8** Write `docs/contributing.md` — guide for adding a capability node or registry entry via GitHub web UI; minimum fields explained clearly; `teaser` field highlighted as the most important optional field; `x-` extension convention explained; explicitly states "your first submission doesn't need to be complete — we'll help fill in the gaps"
-- [ ] **M1-9** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md` — checklist: title is German, status is `needed`, Markdown body explains the outcome with the "2–5 tools" litmus test
-- [ ] **M1-10** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md` — checklist: capabilities array references at least one existing node ID, teaser is one German sentence, DSGVO field is set if known, Markdown body includes a classroom scenario
+- [ ] **M1-10** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/**`; runs `npm run check-schemas` (fails if generated JSON Schemas are out of sync), then `ajv validate` against changed files; fails PR with readable error output; runs without Pages permissions (safe for fork PRs)
+- [ ] **M1-11** Write `docs/contributing.md` — guide for adding a capability node or registry entry via GitHub web UI; includes the 6 KMK domain slugs with one-line descriptions so contributors can choose without leaving GitHub; `teaser` field highlighted as the most important optional field; `x-` extension convention explained; states "your first submission doesn't need to be complete"
+- [ ] **M1-12** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md` — checklist: title is German, `kmk-domains` has at least one value (slugs listed), `status` is `needed`, Markdown body explains the outcome with the "2–5 tools" litmus test
+- [ ] **M1-13** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md` — checklist: `capabilities` references at least one existing node ID, `teaser` is one German sentence, `dsgvo` is set if known, Markdown body includes a classroom scenario
 
 ### Milestone M2: Capability Map UI
 *Acceptance: `/edugo/map` renders capability nodes from data files; KMK domain filter and gap toggle work client-side via URL params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*
