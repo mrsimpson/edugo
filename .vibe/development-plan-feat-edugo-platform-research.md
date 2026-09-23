@@ -287,7 +287,13 @@ The Vue app uses `createWebHashHistory('/edugo/')` instead of `createWebHistory`
 The landing page is `LandingView.vue` at hash route `/` in the Vue SPA (deployed at `app.html`). The VitePress site remains at the repo root and serves the README and docs. This keeps a single styling system (UnoCSS) and a single deploy artifact. VitePress SSG would have required a separate custom theme and two styling contexts.
 
 ### KD-36: Route rename — /catalog and /apps replace /map and /registry
-`/catalog` replaces `/map` (capability catalog/Kompetenzkatalog), `/apps` replaces `/registry` (Tool-Registry). More intuitive for both personas. Legacy paths `/map`, `/map/:id`, `/registry`, `/registry/:id` redirect to the new URLs so old bookmarks still work.
+`/catalog` replaces `/map` (capability catalog/Kompetenzkatalog), `/apps` replaces `/registry` (Tool-Registry). More intuitive for both personas. Legacy redirects added initially were subsequently removed — no backward compatibility needed at this stage.
+
+### KD-40: de.ts is the single source for all user-visible strings
+Extended `src/i18n/de.ts` to cover all UI sections: `common`, `status`, `catalog`, `catalogDetail`, `registry`, `registryDetail`, `landing`. Every component imports `{ de as t }` and reads from it. No German string may be hardcoded in a template. Function-valued entries handle pluralisation and interpolation in the copy file, keeping templates logic-free. Adding a second locale requires only a new file with the same shape — zero template changes.
+
+### KD-41: Landing page narrative arc finalised
+Structure: full-viewport hero (headline + subtitle) → problem tabs (auto-advance 5s, lock on click, progress bar below quote) → ecosystem conclusion section → solution tabs (synced persona) → how it works + map mockup → final CTA + footer. Unverified PISA/Greiff quote removed entirely — platform is about trust. Hero headline: "Deutschlands Schulen haben ein Digitalisierungsproblem." / subtitle: "Und da geht es nicht um WLAN oder iPads, sondern um passende Lösungen." Final CTA: "Mit Machern mitmachen."
 
 ### KD-37: Landing page i18n structure
 All user-visible copy lives in `src/i18n/de.ts` — never hardcoded in templates. The type `LandingCopy` is exported so a future `en.ts` can implement the same shape. Locale switching is a future feature; the infrastructure is in place.
@@ -307,7 +313,8 @@ Landing page uses a tabbed card pattern (not separate sections) for the three st
 - [x] **M4-4** Implement CTAs: "Tools entdecken" (→ `#/apps`) as primary; GitHub star as secondary; per-stakeholder CTAs pointing to relevant views
 - [x] **M4-5** Build passes (335KB JS, 36KB CSS gzipped to 111KB/6KB) — no external runtime, no CDN fonts
 - [x] **M4-6** DSGVO audit: zero external requests in built output (no CDN fonts, no analytics, no third-party scripts); footer note confirms this
-- [ ] **M4-7** Accessibility audit: WCAG 2.1 AA check; at minimum: contrast ratios, heading hierarchy, image alt text, keyboard navigation
+- [x] **M4-7** i18n: all hardcoded strings moved to `de.ts`; legacy redirects removed
+- [ ] **M4-8** Accessibility audit: WCAG 2.1 AA structural check; heading hierarchy, aria-labels, keyboard navigation
 
 ### Completed
 - [x] M0: Deployment pipeline (2026-09-23)
