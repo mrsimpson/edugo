@@ -5,6 +5,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --base /edugo/",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
@@ -13,8 +16,11 @@
     "check-schemas": "tsx schemas/generate.ts --check"
   },
   "devDependencies": {
+    "@unocss/preset-wind4": "^66.10.5",
     "tsx": "^4.23.15",
+    "unocss": "^66.10.5",
     "vitepress": "^1.6.4",
+    "vue-router": "^4.6.4",
     "yaml": "^2.9.1",
     "zod": "^4.6.5",
     "zod-to-json-schema": "^3.25.2"

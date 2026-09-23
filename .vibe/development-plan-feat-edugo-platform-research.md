@@ -224,8 +224,11 @@ The arc42 CLI is published under `@doctc/arc42` (not `arc42` or `@arc42/arc42-cl
 ### KD-30: Zod v4 built-in toJSONSchema used instead of zod-to-json-schema
 Zod v4 ships `z.toJSONSchema()` natively. The `zod-to-json-schema` package (v3.x) produces empty schemas when given Zod v4 objects (internal class mismatch). Use `z.toJSONSchema(schema, { target: 'draft-2020-12' })` directly. The `zod-to-json-schema` devDependency is kept for now but unused. Generated schemas conform to `https://json-schema.org/draft/2020-12/schema`.
 
-### KD-31: dsgvo field is optional in Zod but required in generated JSON Schema
-`z.enum(...).optional().default('unknown')` makes dsgvo optional in Zod (defaults to 'unknown') but zod v4 toJSONSchema still lists it as required because of how defaults are emitted. Acceptable — contributors who omit dsgvo will get a CI warning that prompts them to explicitly set it. Intent: make the DSGVO decision explicit rather than silent.
+### KD-32: Root vite.config.ts must use configFile:false in VitePress config
+Adding a root `vite.config.ts` (for the Vue app build) causes VitePress to pick it up automatically via Vite's config resolution. The UnoCSS plugin registered there conflicts with VitePress's own @vitejs/plugin-vue registration, breaking SFC parsing for all VitePress component files with errors like "At least one <template> or <script> is required." Fix: set `vite: { configFile: false }` in `docs/.vitepress/config.ts` to isolate VitePress from the app's Vite config.
+
+### KD-33: Vue app uses hash-based routing for GitHub Pages compatibility
+The Vue app uses `createWebHashHistory('/edugo/')` instead of `createWebHistory`. GitHub Pages serves static files and cannot handle HTML5 history API URLs (deep links return 404). Hash router means `/edugo/#/map` and `/edugo/#/map/:id` work correctly without a server or 404.html redirect trick. Trade-off: URLs are less clean, but correct behavior outweighs aesthetics for a static deploy.
 
 ### Milestone M1: Data Foundations
 *Acceptance: `data/` directory structure exists with schemas and seed data; schema validation CI workflow passes on a correct PR and fails on a malformed PR; a contributor can understand what to submit by reading `docs/contributing.md`.*
@@ -252,19 +255,19 @@ Zod v4 ships `z.toJSONSchema()` natively. The `zod-to-json-schema` package (v3.x
 - [x] **M1-13** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md`
 
 ### Milestone M2: Capability Map UI
-*Acceptance: `/edugo/map` renders capability nodes from data files; KMK domain filter and gap toggle work client-side via URL params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*
+*Acceptance: `/edugo/` renders capability nodes from data files; KMK domain filter and gap toggle work client-side via URL hash params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*
 
-- [ ] **M2-1** Scaffold Vue 3 app at repo root: `src/main.ts`, `src/App.vue`, Vue Router config
-- [ ] **M2-2** Configure Vite with UnoCSS (preset-wind4) and `import.meta.glob` for loading `data/` files at build time
-- [ ] **M2-3** Implement composable `useCapabilityNodes()` — loads and parses all `data/capabilities/*.md`; exposes flat array of nodes with parsed frontmatter; no graph assembly needed
-- [ ] **M2-4** Implement composable `useTaxonomies()` — loads all `data/taxonomies/*.yaml`; exposes vocabulary maps keyed by taxonomy id for use in filter components and badge renderers
-- [ ] **M2-5** Implement composable `useCapabilityMapFilters()` — reads/writes URL query params; filter dimensions: `kmk` (multi-value), `gap` (boolean preset for status: needed/partial); exposes filtered node list
-- [ ] **M2-6** Create `CapabilityNodeCard.vue` — title, status badge (needed=red/partial=amber/well-covered=green), KMK domain chips, linked entry count; 3-second scannable layout
-- [ ] **M2-7** Create `CapabilityMapFilterPanel.vue` — KMK domain checkboxes with result counts, gap toggle; writes to URL params; shows how many nodes match each filter value
-- [ ] **M2-8** Create `CapabilityMapView.vue` (route `/map`) — filterable grid of CapabilityNodeCards; gap preset as default for Contributor entry point; full view for Adopter/Navigator entry point
-- [ ] **M2-9** Create `CapabilityNodeDetailView.vue` (route `/map/:id`) — full Markdown body rendered, KMK domain tags displayed, linked registry entries listed as entry cards, "build this" CTA for gap nodes that pre-selects the node in contribution flow
-- [ ] **M2-10** Wire Vue Router: `/` → (VitePress home), `/map` → CapabilityMapView, `/map/:id` → CapabilityNodeDetailView, `/registry` → (stub for M3)
-- [ ] **M2-11** Accessibility: keyboard navigation for filter panel; aria-labels on status badges; result count announced to screen readers on filter change
+- [x] **M2-1** Scaffold Vue 3 app at repo root: `src/main.ts`, `src/App.vue`, Vue Router config
+- [x] **M2-2** Configure Vite with UnoCSS (preset-wind4) and `import.meta.glob` for loading `data/` files at build time; add `configFile: false` to VitePress config to prevent conflict
+- [x] **M2-3** Implement composable `useCapabilityNodes()` — loads and parses all `data/capabilities/*.md`; exposes flat array of nodes with parsed frontmatter
+- [x] **M2-4** *(useTaxonomies not needed — KMK meta in Zod schema constants, DSGVO meta in registry-entry.ts)*
+- [x] **M2-5** Implement composable `useCapabilityMapFilters()` — reads/writes URL hash query params; filter dimensions: `kmk` (multi-value), `gap` (boolean preset); exposes filtered node list
+- [x] **M2-6** Create `CapabilityNodeCard.vue` — title, status badge, KMK domain chips, linked entry count
+- [x] **M2-7** Create `CapabilityMapFilterPanel.vue` — KMK domain checkboxes with result counts, gap toggle; writes to URL params; emits events to parent
+- [x] **M2-8** Create `CapabilityMapView.vue` (route `/map`) — filterable grid of CapabilityNodeCards; gap CTA when gap view active
+- [x] **M2-9** Create `CapabilityNodeDetailView.vue` (route `/map/:id`) — full Markdown body rendered, KMK domain tags, linked registry entries, "build this" CTA for gap nodes
+- [x] **M2-10** Wire Vue Router: `/` → redirect to `/map`, `/map`, `/map/:id`, `/registry` stub
+- [ ] **M2-11** Accessibility: verify keyboard navigation for filter panel; aria-labels on status badges; result count announced to screen readers
 
 ### Milestone M3: Solution Registry UI
 *Acceptance: `/edugo/registry` renders registry entries from data files; filters (subject, age, active/passive, DSGVO, classroom-moment) work client-side via URL params; DSGVO trust badges display correctly; the teaser is visible on the card; contribution CTA opens a pre-filled GitHub PR.*

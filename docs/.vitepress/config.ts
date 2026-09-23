@@ -7,6 +7,13 @@ export default defineConfig({
   title: 'edugo',
   description: 'The missing infrastructure layer for educational innovation',
 
+  // Explicitly set empty vite config to prevent VitePress from picking up
+  // the root vite.config.ts (which imports UnoCSS and breaks VitePress's Vue SFC processing)
+  vite: {
+    configFile: false,
+    plugins: [],
+  },
+
   srcExclude: [
     '.vibe/**',
     'docs/.vitepress/**',

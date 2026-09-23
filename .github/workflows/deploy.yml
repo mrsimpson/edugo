@@ -34,6 +34,9 @@ jobs:
       - name: Validate data files
         run: npm run validate-data
 
+      - name: Build Vue app
+        run: npm run build
+
       - name: Build VitePress docs
         run: npm run docs:build
 
@@ -43,8 +46,16 @@ jobs:
       - name: Build arc42 architecture docs
         run: arc42 build --dir docs/arc42 --out docs/.vitepress/dist/architecture --base /edugo/architecture/
 
-      - name: Publish JSON Schemas to Pages
-        run: mkdir -p docs/.vitepress/dist/schemas && cp schemas/generated/*.json docs/.vitepress/dist/schemas/
+      - name: Assemble deploy artifact
+        run: |
+          # Merge Vue app (Vite dist) into the VitePress dist root.
+          # Vite builds to dist/ with base=/edugo/; VitePress builds to docs/.vitepress/dist/.
+          # We copy the Vue app assets in without overwriting VitePress HTML pages.
+          cp -rn dist/assets docs/.vitepress/dist/assets 2>/dev/null || cp -r dist/assets docs/.vitepress/dist/assets
+          cp dist/index.html docs/.vitepress/dist/app.html
+          # Publish JSON Schemas
+          mkdir -p docs/.vitepress/dist/schemas
+          cp schemas/generated/*.json docs/.vitepress/dist/schemas/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
