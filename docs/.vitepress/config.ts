@@ -26,7 +26,7 @@ export default defineConfig({
       { text: 'Beitragen', link: '/docs/contributing' },
       {
         text: 'Architecture',
-        link: '/edugo/architecture/',
+        link: 'https://mrsimpson.github.io/edugo/architecture/',
         target: '_self',
       },
     ],

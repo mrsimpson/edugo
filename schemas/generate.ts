@@ -18,18 +18,46 @@ const checkMode = process.argv.includes('--check')
 
 mkdirSync(outDir, { recursive: true })
 
+/**
+ * Post-process a generated JSON Schema object to enforce the x- prefix convention:
+ * Replace the unrestricted `additionalProperties: {}` that z.catchall() produces
+ * with `patternProperties: { "^x-": {} }` + `additionalProperties: false`.
+ * Also move optional-with-default fields (dsgvo) out of `required`.
+ */
+function enforceXPrefixConvention(schema: Record<string, unknown>, optionalFields: string[] = []): Record<string, unknown> {
+  const result = { ...schema }
+
+  // Replace catchall additionalProperties with x- pattern restriction
+  if ('additionalProperties' in result && JSON.stringify(result.additionalProperties) === '{}') {
+    delete result.additionalProperties
+    result.patternProperties = { '^x-': {} }
+    result.additionalProperties = false
+  }
+
+  // Move optional-with-default fields out of required (Zod v4 toJSONSchema includes
+  // them in required because the *output* type always has them after default is applied,
+  // but the *input* schema should treat them as optional)
+  if (optionalFields.length > 0 && Array.isArray(result.required)) {
+    result.required = (result.required as string[]).filter(f => !optionalFields.includes(f))
+    if ((result.required as string[]).length === 0) delete result.required
+  }
+
+  return result
+}
+
 const schemas = [
   {
     name: 'capability-node.v1.schema.json',
-    schema: z.toJSONSchema(CapabilityNodeSchema, {
-      target: 'draft-2020-12',
-    }),
+    schema: enforceXPrefixConvention(
+      z.toJSONSchema(CapabilityNodeSchema, { target: 'draft-2020-12' }) as Record<string, unknown>,
+    ),
   },
   {
     name: 'registry-entry.v1.schema.json',
-    schema: z.toJSONSchema(RegistryEntrySchema, {
-      target: 'draft-2020-12',
-    }),
+    schema: enforceXPrefixConvention(
+      z.toJSONSchema(RegistryEntrySchema, { target: 'draft-2020-12' }) as Record<string, unknown>,
+      ['dsgvo'], // optional with default — should not be required in JSON Schema
+    ),
   },
 ]
 

@@ -67,5 +67,8 @@
     "status",
     "kmk-domains"
   ],
-  "additionalProperties": {}
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
 }

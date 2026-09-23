@@ -65,11 +65,12 @@ If you're a teacher who has built something, an educator who wants to find somet
 ## Structure of this repo
 
 ```
-/docs          — Vision, capability map, architecture guidelines
-/registry      — The solution registry (structured data files)
-/capabilities  — The capability map (structured data files)
-/site          — The landing page and platform frontend
-/skills        — Agentic creation skills and scaffolding for builders
+/data/capabilities  — The capability map (structured Markdown + YAML files)
+/data/entries       — The solution registry (structured Markdown + YAML files)
+/data/taxonomies    — Platform-owned controlled vocabularies (YAML)
+/schemas            — Zod v4 schema sources + generated JSON Schemas
+/scripts            — Validation and build scripts
+/docs               — Vision, contributing guide, arc42 architecture docs
 ```
 
 ---

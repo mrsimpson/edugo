@@ -45,8 +45,10 @@
   "required": [
     "id",
     "title",
-    "capabilities",
-    "dsgvo"
+    "capabilities"
   ],
-  "additionalProperties": {}
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
 }

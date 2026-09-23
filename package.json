@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "tsx": "^4.23.15",
-    "vitepress": "latest",
+    "vitepress": "^1.6.4",
     "yaml": "^2.9.1",
     "zod": "^4.6.5",
     "zod-to-json-schema": "^3.25.2"
