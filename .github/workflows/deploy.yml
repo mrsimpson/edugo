@@ -48,10 +48,10 @@ jobs:
 
       - name: Assemble deploy artifact
         run: |
-          # Merge Vue app (Vite dist) into the VitePress dist root.
-          # Vite builds to dist/ with base=/edugo/; VitePress builds to docs/.vitepress/dist/.
-          # We copy the Vue app assets in without overwriting VitePress HTML pages.
-          cp -rn dist/assets docs/.vitepress/dist/assets 2>/dev/null || cp -r dist/assets docs/.vitepress/dist/assets
+          # Merge Vue app assets into VitePress dist/assets/ (which already exists).
+          # cp -rn skips the whole dir if destination exists; copy files individually instead.
+          cp dist/assets/* docs/.vitepress/dist/assets/
+          # Place the Vue app HTML at /edugo/app.html
           cp dist/index.html docs/.vitepress/dist/app.html
           # Publish JSON Schemas
           mkdir -p docs/.vitepress/dist/schemas
