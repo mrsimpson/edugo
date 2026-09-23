@@ -3,6 +3,9 @@
 # are not deployable components and should not be modeled as building blocks.
 # Syntax: one path per line, relative to repo root. No globs.
 
+# This file itself
+.arc42ignore
+
 # Git and editor config
 .gitignore
 .gitattributes
