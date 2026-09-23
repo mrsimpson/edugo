@@ -166,17 +166,58 @@ GitHub chosen because it has the largest contributor community and lowest onboar
 
 ## Plan
 ### Tasks
-- [ ] *To be added when this phase becomes active*
+- [x] Define deployment target: GitHub Pages at https://mrsimpson.github.io/edugo/ — base path = /edugo/
+- [x] Define VitePress scope: serves README.md + docs/vision.md from repo root (srcDir: '..')
+- [x] Define arc42 build scope: arc42 build --dir docs/arc42 --out dist/architecture --base /edugo/architecture/
+- [x] Define deploy merge: VitePress dist/ + arc42 dist/architecture/ → single GitHub Pages deploy root
+- [x] Define GitHub Actions workflow structure (single deploy.yml, triggered on push to main)
+
+### Implementation plan (for Code phase)
+
+#### Files to create:
+- `package.json` — scripts: `docs:dev`, `docs:build`, `docs:preview`; devDep: vitepress
+- `docs/.vitepress/config.ts` — VitePress config: srcDir='..', base='/edugo/', nav+sidebar for README+vision
+- `.github/workflows/deploy.yml` — build VitePress → dist/, arc42 build → dist/architecture/, deploy to gh-pages
+- `.gitignore` — add dist/, node_modules/, docs/.vitepress/cache/
+
+#### VitePress config key points:
+- `srcDir: '..'` (relative to docs/.vitepress — resolves to repo root)
+- `srcExclude: ['.vibe/**', 'docs/.vitepress/**', 'docs/arc42/**', 'node_modules/**', '.github/**']`
+- `base: '/edugo/'`
+- `cleanUrls: true`
+- Nav: Home (/) → README.md, Vision (/docs/vision) → docs/vision.md, Architecture link → /edugo/architecture/
+- Sidebar: Overview group with Home + Vision
+
+#### arc42 build command:
+```
+arc42 --dir docs/arc42 build --out dist/architecture --base /edugo/architecture/
+```
+
+#### GitHub Actions deploy.yml structure:
+```yaml
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # for peaceiris/actions-gh-pages
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+      - run: npm run docs:build          # → dist/
+      - run: npx arc42 --dir docs/arc42 build --out dist/architecture --base /edugo/architecture/
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
+```
 
 ### Completed
-*None yet*
-
-## Code
-### Tasks
-- [ ] *To be added when this phase becomes active*
-
-### Completed
-*None yet*
+- [x] Plan defined (2026-09-23)
 
 ## Finalize
 ### Tasks
