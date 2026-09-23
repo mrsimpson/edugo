@@ -30,6 +30,11 @@ export default defineConfig({
         link: 'https://mrsimpson.github.io/edugo/architecture/',
         target: '_self',
       },
+      {
+        text: 'About edugo',
+        link: 'https://mrsimpson.github.io/edugo/about/',
+        target: '_self',
+      },
     ],
 
     sidebar: [

@@ -18,6 +18,9 @@
     "check-schemas": "tsx schemas/generate.ts --check",
     "typecheck": "vue-tsc --noEmit",
     "arc42:validate": "node scripts/arc42-validate.mjs",
+    "biz42:validate": "biz42 validate",
+    "biz42:build": "biz42 build --out dist/about --base /edugo/about/",
+    "biz42:serve": "biz42 serve",
     "test:e2e": "playwright test",
     "test:e2e:local": "BASE_URL=http://localhost:4173/edugo/ playwright test",
     "prepare": "husky"

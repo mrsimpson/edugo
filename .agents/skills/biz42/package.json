@@ -1,0 +1,10 @@
+{
+  "name": "@biz42/skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent skill for biz42 DSL authoring.",
+  "license": "MIT",
+  "files": [
+    "SKILL.md"
+  ]
+}

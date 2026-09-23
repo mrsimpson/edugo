@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "biz42": {
+      "source": "mrsimpson/biz42",
+      "sourceType": "github",
+      "skillPath": "packages/skill/SKILL.md",
+      "computedHash": "e9e222d77b71639fa8e61d32643ec05a8ba40c535dc5c95e17300f69d6b2f9ab"
+    }
+  }
+}
