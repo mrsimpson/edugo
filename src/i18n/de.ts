@@ -161,7 +161,7 @@ export const de = {
         story:
           'edugo bietet dir einen einfach zu durchsuchenden Katalog mit Apps, die sicher nutzbar sind. Keine dubiosen Seiten — einfache, zielgerichtete Apps mit einem klaren Bildungsbezug.\n\nJedes Tool zeigt sofort seinen Datenschutzstatus. Kein Backend heißt: Schülerdaten können gar nicht erst abfließen.',
         cta: 'Tools entdecken',
-        ctaHref: '/edugo/app.html#/apps',
+        ctaHref: '/edugo/#/apps',
       },
       navigator: {
         role: 'Für Schulen & Koordinatoren',
@@ -170,7 +170,7 @@ export const de = {
         story:
           'Die Kompetenzkarte zeigt, welche Lernziele durch digitale Tools unterstützt werden — und wo die Lücken sind. Nicht als statisches Dokument, sondern als lebendige Karte, die wächst.\n\nDu bekommst eine ehrliche Antwort auf die Frage, die du im nächsten Schulentwicklungsgespräch beantworten musst.',
         cta: 'Kompetenzkarte ansehen',
-        ctaHref: '/edugo/app.html#/catalog',
+        ctaHref: '/edugo/#/catalog',
       },
       builder: {
         role: 'Für Digital Schaffende',
@@ -179,7 +179,7 @@ export const de = {
         story:
           '„It\'s the age of personal software." Aber wäre es nicht cool, wenn noch mehr Menschen davon profitieren könnten?\n\nedugo zeigt dir, wo Bedarf ist: welche Lernziele keine passenden Tools haben. Du trägst dein Tool in wenigen Minuten ein — es landet auf der Karte, für alle Schulen findbar, ohne Marketing, ohne Vertrieb.',
         cta: 'Lücken ansehen',
-        ctaHref: '/edugo/app.html#/catalog?gap=true',
+        ctaHref: '/edugo/#/catalog?gap=true',
       },
     },
 
@@ -213,7 +213,7 @@ export const de = {
       description:
         'Es hilft nichts, sich über schlechte Digitalisierung zu beschweren. Wenn zukünftige Generationen nicht das beherrschen, was die Welt von ihnen verlangt, haben wir alle ein Problem. Lasst es uns ändern.',
       primary: 'Tools entdecken',
-      primaryHref: '/edugo/app.html#/apps',
+      primaryHref: '/edugo/#/apps',
       secondary: 'Auf GitHub ansehen',
       secondaryHref: 'https://github.com/mrsimpson/edugo',
     },
