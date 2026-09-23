@@ -189,22 +189,4 @@ Feature branches: `feat/{short-description}`. Fix branches: `fix/{short-descript
 3. Update the filter composable to expose the new vocabulary as a filter dimension.
 4. No component changes unless a new filter UI element is needed.
 
----
 
-## 7. Known Design Debt
-
-### D-01: VitePress srcDir includes full repo root
-
-Setting `srcDir: '..'` in the VitePress config exposes the entire repo root to VitePress's Markdown scanner. The `srcExclude` list must be maintained manually as new directories are added. This is acceptable for Phase 1 but becomes unwieldy if the repo gains many directories. Mitigation: move docs source files into `docs/src/` and use symlinks or `rewrites` for README.md in Phase 2.
-
-### D-02: arc42 CLI DOMPurify / Node 24 incompatibility
-
-Three E013 validation errors appear when running arc42 CLI v0.0.10 on Node 24. These are in the CLI's Mermaid rendering pipeline (a DOMPurify environment check), not in our diagrams. The CI pipeline pins Node 22 to avoid this. Revisit when arc42 CLI v0.0.11+ is released.
-
-### D-03: Schema tooling not finalized
-
-The JSON Schema validation step in CI is planned (`ajv` CLI or a dedicated GitHub Action) but not yet implemented. Until it exists, schema correctness is enforced only by PR review convention. This is the first thing to add in the Code phase after the deploy pipeline.
-
-### D-04: Capability map initial seed is politically undefined
-
-The initial set of capability nodes is undefined. This is the most politically sensitive design decision (who defines what "needs to exist" in education?). The design decision is deferred: Phase 1 ships with a minimal seed set (3–5 nodes from the KMK Kompetenzrahmen) defined by the founding team. A formal RFC process for new node proposals is defined in Phase 2.
