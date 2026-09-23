@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:full": "npm run build && npm run docs:build && node -e \"const fs=require('fs');fs.mkdirSync('dist/docs',{recursive:true});fs.cpSync('docs/dist','dist/docs',{recursive:true})\"",
     "preview": "vite preview --base /edugo/",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

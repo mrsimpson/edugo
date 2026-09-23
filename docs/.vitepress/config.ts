@@ -1,10 +1,11 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  srcDir: '..',
-  base: '/edugo/',
+  srcDir: '.',
+  outDir: 'dist',
+  base: '/edugo/docs/',
   cleanUrls: true,
-  title: 'edugo',
+  title: 'edugo — Docs',
   description: 'The missing infrastructure layer for educational innovation',
 
   // Explicitly set empty vite config to prevent VitePress from picking up
@@ -15,24 +16,17 @@ export default defineConfig({
   },
 
   srcExclude: [
-    '.vibe/**',
-    'docs/.vitepress/**',
-    'docs/arc42/**',
-    'node_modules/**',
-    '.github/**',
+    'arc42/**',
+    '.vitepress/**',
   ],
-
-  rewrites: {
-    'README.md': 'index.md',
-  },
 
   themeConfig: {
     nav: [
-      { text: 'Home', link: '/' },
+      { text: '← edugo', link: 'https://mrsimpson.github.io/edugo/', target: '_self' },
       { text: 'Vision', link: '/docs/vision' },
       { text: 'Beitragen', link: '/docs/contributing' },
       {
-        text: 'Architecture',
+        text: 'Architektur',
         link: 'https://mrsimpson.github.io/edugo/architecture/',
         target: '_self',
       },
@@ -40,9 +34,8 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Overview',
+        text: 'Dokumentation',
         items: [
-          { text: 'Home', link: '/' },
           { text: 'Vision', link: '/docs/vision' },
           { text: 'Beitragen', link: '/docs/contributing' },
         ],

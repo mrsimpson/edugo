@@ -43,28 +43,22 @@ jobs:
       - name: Validate arc42 architecture docs
         run: node scripts/arc42-validate.mjs
 
-      - name: Build Vue app
+      - name: Build Vue app (owns dist/ root at /edugo/)
         run: npm run build
 
-      - name: Build VitePress docs
-        run: npm run docs:build
-
-      - name: Install arc42 CLI
-        run: npm install -g @doctc/arc42@0.24.0
-
-      - name: Build arc42 architecture docs
-        run: arc42 build --dir docs/arc42 --out docs/.vitepress/dist/architecture --base /edugo/architecture/
-
-      - name: Assemble deploy artifact
+      - name: Build VitePress docs (into dist/docs/ at /edugo/docs/)
         run: |
-          # Merge Vue app assets into VitePress dist/assets/ (which already exists).
-          # cp -rn skips the whole dir if destination exists; copy files individually instead.
-          cp dist/assets/* docs/.vitepress/dist/assets/
-          # Place the Vue app HTML at /edugo/app.html
-          cp dist/index.html docs/.vitepress/dist/app.html
-          # Publish JSON Schemas
-          mkdir -p docs/.vitepress/dist/schemas
-          cp schemas/generated/*.json docs/.vitepress/dist/schemas/
+          npm run docs:build
+          mkdir -p dist/docs
+          cp -r docs/dist/. dist/docs/
+
+      - name: Build arc42 architecture docs (into dist/architecture/)
+        run: arc42 build --dir docs/arc42 --out dist/architecture --base /edugo/architecture/
+
+      - name: Publish JSON Schemas (into dist/schemas/)
+        run: |
+          mkdir -p dist/schemas
+          cp schemas/generated/*.json dist/schemas/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -72,7 +66,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: dist
 
   deploy:
     needs: build
