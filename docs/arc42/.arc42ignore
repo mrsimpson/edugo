@@ -1,0 +1,4 @@
+# Paths excluded from arc42 H021 "unclaimed path" hints.
+# These are test infrastructure files — not part of the deployed system scope.
+e2e
+playwright.config.ts
