@@ -221,9 +221,9 @@ export const de = {
     footer: {
       tagline: 'edugo — die fehlende Infrastruktur für Bildungsinnovation.',
       links: [
-        { label: 'Vision', href: '/edugo/docs/vision' },
-        { label: 'Beitragen', href: '/edugo/docs/contributing' },
-        { label: 'Architektur', href: '/edugo/architecture/' },
+        { label: 'Vision', href: 'https://mrsimpson.github.io/edugo/docs/vision' },
+        { label: 'Beitragen', href: 'https://mrsimpson.github.io/edugo/docs/contributing' },
+        { label: 'Architektur', href: 'https://mrsimpson.github.io/edugo/architecture/' },
         { label: 'GitHub', href: 'https://github.com/mrsimpson/edugo' },
       ],
       dsgvo: 'Diese Seite setzt keine Cookies und sendet keine Daten an Dritte.',
