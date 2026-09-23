@@ -1,0 +1,38 @@
+# .arc42ignore — paths excluded from architecture coverage (H021) checks
+# These are standard developer tooling, config, and scaffolding files that
+# are not deployable components and should not be modeled as building blocks.
+# Syntax: one path per line, relative to repo root. No globs.
+
+# Git and editor config
+.gitignore
+.gitattributes
+.editorconfig
+.vscode
+.idea
+
+# Pre-commit hooks
+.husky
+
+# AI workflow / project scaffolding
+.vibe
+.opencode
+
+# CI/CD parent dir (.github/workflows is claimed by bb-cicd)
+.github
+
+# npm lockfile (package.json is claimed via if-root-config)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build tool config (covered by bb-website build toolchain)
+tsconfig.json
+uno.config.ts
+index.html
+
+# Project homepage (VitePress serves this, claimed by bb-docs)
+README.md
+
+# Schema sources and validation scripts (build tooling, not deployable components)
+schemas
+scripts
