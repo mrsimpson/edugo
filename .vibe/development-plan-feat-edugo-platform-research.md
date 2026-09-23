@@ -170,54 +170,103 @@ GitHub chosen because it has the largest contributor community and lowest onboar
 - [x] Define VitePress scope: serves README.md + docs/vision.md from repo root (srcDir: '..')
 - [x] Define arc42 build scope: arc42 build --dir docs/arc42 --out dist/architecture --base /edugo/architecture/
 - [x] Define deploy merge: VitePress dist/ + arc42 dist/architecture/ → single GitHub Pages deploy root
-- [x] Define GitHub Actions workflow structure (single deploy.yml, triggered on push to main)
+- [x] Define GitHub Actions workflow structure — GitHub-native upload/deploy pages actions (no third-party)
+- [x] Document design principles in .vibe/docs/design.md — data model, components, pipeline, naming, extension rules
+- [x] Break down all Code phase work into milestones and tasks (see below)
 
-### Implementation plan (for Code phase)
+### KD-18: GitHub Pages Deploy — Native Actions Only
+Use `actions/configure-pages`, `actions/upload-pages-artifact`, and `actions/deploy-pages` (GitHub-native). No `peaceiris/actions-gh-pages` or other third-party deploy actions. Permissions: `pages: write` + `id-token: write` only. Node pinned to 22 (LTS) to avoid arc42 CLI / Node 24 DOMPurify incompatibility. `.nojekyll` file ensured by VitePress build step.
 
-#### Files to create:
-- `package.json` — scripts: `docs:dev`, `docs:build`, `docs:preview`; devDep: vitepress
-- `docs/.vitepress/config.ts` — VitePress config: srcDir='..', base='/edugo/', nav+sidebar for README+vision
-- `.github/workflows/deploy.yml` — build VitePress → dist/, arc42 build → dist/architecture/, deploy to gh-pages
-- `.gitignore` — add dist/, node_modules/, docs/.vitepress/cache/
+### KD-19: Capability Node Graph Model
+Capability nodes are a directed graph stored as individual YAML+MD files. Each node has: `id` (slug, permanent), `title` (German), `domain` (KMK slug), `parent` (optional, references another node's id), `status` (needed/partial/well-covered), and a freeform Markdown body. The graph is assembled client-side from the flat file list using `parent` references. No graph structure is stored in a separate index file — the graph is derived from the files themselves.
 
-#### VitePress config key points:
-- `srcDir: '..'` (relative to docs/.vitepress — resolves to repo root)
-- `srcExclude: ['.vibe/**', 'docs/.vitepress/**', 'docs/arc42/**', 'node_modules/**', '.github/**']`
-- `base: '/edugo/'`
-- `cleanUrls: true`
-- Nav: Home (/) → README.md, Vision (/docs/vision) → docs/vision.md, Architecture link → /edugo/architecture/
-- Sidebar: Overview group with Home + Vision
-
-#### arc42 build command:
-```
-arc42 --dir docs/arc42 build --out dist/architecture --base /edugo/architecture/
-```
-
-#### GitHub Actions deploy.yml structure:
-```yaml
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write  # for peaceiris/actions-gh-pages
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
-      - run: npm run docs:build          # → dist/
-      - run: npx arc42 --dir docs/arc42 build --out dist/architecture --base /edugo/architecture/
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
-```
+### KD-20: Filter State in URL
+All active filter state (domain, active-passive level, DSGVO status, gap-only toggle) is encoded as URL query parameters. This makes filtered views bookmarkable and shareable. The gap view is a named filter preset (`?gap=true`), not a separate route. Filter composable reads from and writes to `useRoute()` / `useRouter()`.
 
 ### Completed
-- [x] Plan defined (2026-09-23)
+- [x] Plan phase completed (2026-09-23)
+
+---
+
+## Code
+### Milestone M0: Deployment Pipeline (do first — gets something live immediately)
+*Acceptance: a push to main triggers a workflow; https://mrsimpson.github.io/edugo/ serves the VitePress docs site; /architecture/ serves the arc42 site.*
+
+- [ ] **M0-1** Create `package.json` with scripts `docs:dev`, `docs:build`, `docs:preview`; devDep: `vitepress@latest`
+- [ ] **M0-2** Create `docs/.vitepress/config.ts`:
+  - `srcDir: '..'`, `base: '/edugo/'`, `cleanUrls: true`
+  - `srcExclude: ['.vibe/**', 'docs/.vitepress/**', 'docs/arc42/**', 'node_modules/**', '.github/**']`
+  - `rewrites: { 'README.md': 'index.md' }` (treats README.md as the home page)
+  - Nav: Home `/`, Vision `/docs/vision`, Architecture (external link `/edugo/architecture/`)
+  - Sidebar: Overview → Home + Vision
+  - socialLinks: GitHub repo link
+- [ ] **M0-3** Create `.gitignore`: dist/, node_modules/, docs/.vitepress/cache/, docs/.vitepress/dist/
+- [ ] **M0-4** Create `.github/workflows/deploy.yml`:
+  - Trigger: `push: branches: [main]`
+  - Permissions: `pages: write`, `id-token: write`
+  - Node 22 (pinned — arc42 CLI / Node 24 DOMPurify bug)
+  - Steps: checkout → setup-node (cache: npm) → npm ci → npm run docs:build → arc42 build into dist/architecture → actions/configure-pages → actions/upload-pages-artifact (path: dist) → actions/deploy-pages
+- [ ] **M0-5** Enable GitHub Pages in repo settings (source: GitHub Actions) and verify deploy
+- [ ] **M0-6** Smoke test: verify `/edugo/`, `/edugo/docs/vision`, `/edugo/architecture/` all load correctly
+
+### Milestone M1: Data Foundations
+*Acceptance: `data/` directory structure exists with schemas and at least one valid seed file for each type; schema validation CI workflow passes on a correct PR and fails on a malformed PR.*
+
+- [ ] **M1-1** Create `data/taxonomies/active-passive.yaml` — 5-level controlled vocabulary (Create/Solve/Collaborate/Reflect/Receive) with `id`, `label` (German), `level` (1–5)
+- [ ] **M1-2** Create `data/taxonomies/dsgvo-status.yaml` — 4-value vocabulary (green/amber/red/unknown) with labels and descriptions
+- [ ] **M1-3** Create `data/taxonomies/evidence-level.yaml` — 3-value vocabulary (anecdotal/community-validated/research-backed) with labels
+- [ ] **M1-4** Create `data/taxonomies/kmk-domains.yaml` — KMK Kompetenzrahmen 6 domains as controlled vocabulary
+- [ ] **M1-5** Create `schemas/capability-node.schema.json` — required: id, title, domain, status; optional: parent, evidence; body is freeform Markdown
+- [ ] **M1-6** Create `schemas/registry-entry.schema.json` — required: id, title, description, capabilities (array of node ids), active-passive, age-range, dsgvo; optional: backend, forked-from, evidence, source-url, architecture-compliance
+- [ ] **M1-7** Create `schemas/taxonomy-vocabulary.schema.json` — validates the taxonomy files themselves
+- [ ] **M1-8** Seed: create 3–5 capability node files under `data/capabilities/` from KMK Kompetenzrahmen (e.g. kollaboratives-schreiben, mathematisches-problemloesen, digitale-medienproduktion)
+- [ ] **M1-9** Seed: create 1–2 illustrative registry entry files under `data/entries/` referencing the seed nodes
+- [ ] **M1-10** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/`; runs ajv CLI against changed files; fails PR if schema invalid
+- [ ] **M1-11** Document contribution guide: `docs/contributing.md` — how to add a capability node or registry entry (the GitHub web UI flow, the PR template, the schema fields)
+- [ ] **M1-12** Create `.github/PULL_REQUEST_TEMPLATE/` — separate templates for capability node PRs and registry entry PRs with field checklists
+
+### Milestone M2: Capability Map UI
+*Acceptance: `/edugo/map` renders capability nodes from data files; domain filter, gap toggle, and active/passive filter work client-side; a node detail page shows linked registry entries.*
+
+- [ ] **M2-1** Scaffold Vue 3 app at repo root: `src/main.ts`, `src/App.vue`, Vue Router config
+- [ ] **M2-2** Configure Vite+ (`vp` / Vite) with UnoCSS (preset-wind4) and `import.meta.glob` for data loading
+- [ ] **M2-3** Implement data composable `useCapabilityNodes()` — loads all `data/capabilities/*.md` at build time via `import.meta.glob`, parses YAML frontmatter, assembles parent/child graph
+- [ ] **M2-4** Implement data composable `useTaxonomies()` — loads all `data/taxonomies/*.yaml`, exposes vocabulary arrays for use in filter components and schema references
+- [ ] **M2-5** Implement filter composable `useCapabilityMapFilters()` — reads/writes URL query params; exposes filtered node list; includes gap preset (`?gap=true`)
+- [ ] **M2-6** Create `CapabilityNodeCard.vue` — displays: title, domain, status badge (color-coded: needed=red, partial=amber, well-covered=green), linked entry count
+- [ ] **M2-7** Create `CapabilityMapFilterPanel.vue` — domain multi-select, gap toggle, status filter; writes to URL params via filter composable
+- [ ] **M2-8** Create `CapabilityMapView.vue` (route `/map`) — grid of CapabilityNodeCards with FilterPanel; reads filter state from composable
+- [ ] **M2-9** Create `CapabilityNodeDetailView.vue` (route `/map/:id`) — full node description, coverage status, linked registry entries (cross-referenced by capability id), "build this" CTA for gap nodes
+- [ ] **M2-10** Wire Vue Router: `/` → landing (README content or landing component), `/map` → CapabilityMapView, `/map/:id` → CapabilityNodeDetailView, `/registry` → (placeholder for M3)
+- [ ] **M2-11** Accessibility: keyboard navigation for filter panel; aria-labels on status badges; focus management on route transitions
+
+### Milestone M3: Solution Registry UI
+*Acceptance: `/edugo/registry` renders registry entries from data files; all filter dimensions (capability, active/passive, DSGVO, age range) work client-side; trust signal badges display correctly; contribution CTA opens a pre-filled GitHub PR.*
+
+- [ ] **M3-1** Implement data composable `useRegistryEntries()` — loads all `data/entries/*.md` at build time via `import.meta.glob`, parses YAML frontmatter
+- [ ] **M3-2** Implement trust signal composable `useTrustSignals(entry)` — computes: DSGVO badge from `dsgvo` field + automatic green if `backend: none`; evidence badge from `evidence` field; frontend-only badge if `backend: none`; architecture-compliance badge if declared
+- [ ] **M3-3** Implement filter composable `useRegistryFilters()` — URL-encoded filter state for: capability node (multi-select), active-passive level (multi-select), DSGVO status, age range, subject
+- [ ] **M3-4** Create `TrustSignalBadge.vue` — renders a single trust signal (icon + label + tooltip with explanation); used by entry card
+- [ ] **M3-5** Create `RegistryEntryCard.vue` — title, description excerpt, capability node tags, active-passive level badge, trust signal row (using TrustSignalBadge), links to source and detail
+- [ ] **M3-6** Create `RegistryFilterPanel.vue` — capability node selector (filterable), active-passive checkboxes, DSGVO status filter, age range filter; writes to URL params
+- [ ] **M3-7** Create `RegistryView.vue` (route `/registry`) — grid of RegistryEntryCards with FilterPanel; empty state with contribution CTA
+- [ ] **M3-8** Create `RegistryEntryDetailView.vue` (route `/registry/:id`) — full entry: all metadata fields, trust signals, classroom scenario (Unterrichtsidee), fork lineage, links
+- [ ] **M3-9** Implement contribution CTA: a button that constructs a GitHub PR URL with pre-filled template params and opens it in a new tab (no server call)
+- [ ] **M3-10** Add "submit an entry" link from capability node detail pages to the contribution flow, pre-selecting the node
+
+### Milestone M4: Landing Page (Phase 0 polish)
+*Acceptance: the home page (`/`) is a compelling, polished narrative page; it tells the problem/vision/mechanism story; it visually illustrates the capability map concept; it has a clear CTA; it is fast, accessible, and DSGVO-clean.*
+
+- [ ] **M4-1** Design the narrative flow: problem section (PISA 2026) → gap section (isolation) → vision section (map + ecosystem) → how it works (capability map visual) → CTA
+- [ ] **M4-2** Create illustrated capability map mockup (SVG or CSS-only — no external assets)
+- [ ] **M4-3** Create illustrated registry entry mockup (static example card)
+- [ ] **M4-4** Implement CTA: GitHub star link (frictionless, no DSGVO overhead) as primary; link to `/map` and `/registry` as secondary (once those milestones are complete)
+- [ ] **M4-5** Performance: measure LCP on mobile; ensure < 1.5s; use VitePress SSG output to guarantee content visible without JS
+- [ ] **M4-6** DSGVO audit: confirm zero external requests in built output (no CDN fonts, no analytics, no third-party scripts)
+- [ ] **M4-7** Accessibility audit: WCAG 2.1 AA check; at minimum: contrast ratios, heading hierarchy, image alt text, keyboard navigation
+
+### Completed
+*None yet — planning complete, implementation not started*
 
 ## Finalize
 ### Tasks
