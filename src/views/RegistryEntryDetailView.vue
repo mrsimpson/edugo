@@ -8,9 +8,9 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Back link -->
     <router-link
-      to="/registry"
+      to="/apps"
       class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 mb-6"
-      aria-label="Zurück zur Registry"
+      aria-label="Zurück zur Tool-Registry"
     >
       ← Tool-Registry
     </router-link>
@@ -18,7 +18,7 @@
     <!-- Not found -->
     <div v-if="!entry" class="text-center py-16 text-gray-500">
       <p class="text-lg font-medium">Tool nicht gefunden</p>
-      <router-link to="/registry" class="mt-2 text-sm text-blue-600 underline">
+      <router-link to="/apps" class="mt-2 text-sm text-blue-600 underline">
         Zur Registry
       </router-link>
     </div>
@@ -72,7 +72,7 @@
           <router-link
             v-for="cap in linkedCapabilities"
             :key="cap.id"
-            :to="`/map/${cap.id}`"
+            :to="`/catalog/${cap.id}`"
             class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 hover:bg-blue-100 transition-colors no-underline"
           >
             <span
@@ -107,7 +107,7 @@
           <router-link
             v-for="similar in similarEntries"
             :key="similar.id"
-            :to="`/registry/${similar.id}`"
+            :to="`/apps/${similar.id}`"
             class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3 hover:border-blue-300 no-underline"
           >
             <div>

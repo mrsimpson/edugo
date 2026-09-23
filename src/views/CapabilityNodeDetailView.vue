@@ -8,7 +8,7 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Back link -->
     <router-link
-      to="/map"
+      to="/catalog"
       class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 mb-6"
       aria-label="Zurück zur Kompetenzkarte"
     >
@@ -18,7 +18,7 @@
     <!-- Not found -->
     <div v-if="!node" class="text-center py-16 text-gray-500">
       <p class="text-lg font-medium">Kompetenz nicht gefunden</p>
-      <router-link to="/map" class="mt-2 text-sm text-blue-600 underline">
+      <router-link to="/catalog" class="mt-2 text-sm text-blue-600 underline">
         Zur Kompetenzkarte
       </router-link>
     </div>
@@ -71,7 +71,7 @@
           <router-link
             v-for="entry in linkedEntries"
             :key="entry.id"
-            :to="`/registry`"
+            :to="`/apps/${entry.id}`"
             class="block bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all no-underline"
           >
             <div class="flex items-start justify-between gap-3">

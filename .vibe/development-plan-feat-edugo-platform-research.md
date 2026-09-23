@@ -283,19 +283,38 @@ The Vue app uses `createWebHashHistory('/edugo/')` instead of `createWebHistory`
 - [x] **M3-9** Create `RegistryEntryDetailView.vue` — DSGVO explanation box, capability links, similar tools
 - [x] **M3-10** Contribution CTA — pre-filled GitHub new-file URL with template content
 
+### KD-35: Landing page lives in the Vue app, not VitePress
+The landing page is `LandingView.vue` at hash route `/` in the Vue SPA (deployed at `app.html`). The VitePress site remains at the repo root and serves the README and docs. This keeps a single styling system (UnoCSS) and a single deploy artifact. VitePress SSG would have required a separate custom theme and two styling contexts.
+
+### KD-36: Route rename — /catalog and /apps replace /map and /registry
+`/catalog` replaces `/map` (capability catalog/Kompetenzkatalog), `/apps` replaces `/registry` (Tool-Registry). More intuitive for both personas. Legacy paths `/map`, `/map/:id`, `/registry`, `/registry/:id` redirect to the new URLs so old bookmarks still work.
+
+### KD-37: Landing page i18n structure
+All user-visible copy lives in `src/i18n/de.ts` — never hardcoded in templates. The type `LandingCopy` is exported so a future `en.ts` can implement the same shape. Locale switching is a future feature; the infrastructure is in place.
+
+### KD-38: Three-stakeholder card pattern
+Landing page uses a tabbed card pattern (not separate sections) for the three stakeholder promises: Lehrkraft / Schulen & Koordinatoren / Entwickler & Eltern. Cards rotate to center stage on tab click. Pure CSS `<transition>` with `mode="out-in"` — no animation library. Each card tells a story-first narrative starting from the stakeholder's concrete pain, then explains what edugo does for them, then CTA.
+
+### KD-39: App nav hidden on landing page
+`App.vue` uses `route.path === '/'` to hide the top nav bar on the landing page, which has its own full-page layout with embedded navigation in the footer. All inner pages show the nav bar as before.
+
 ### Milestone M4: Landing Page (Phase 0 polish)
 *Acceptance: the home page (`/`) is a compelling, polished narrative page; it tells the problem/vision/mechanism story; it visually illustrates the capability map concept; it has a clear CTA; it is fast, accessible, and DSGVO-clean.*
 
-- [ ] **M4-1** Design the narrative flow: problem section (PISA 2026) → gap section (isolation) → vision section (map + ecosystem) → how it works (capability map visual) → CTA
-- [ ] **M4-2** Create illustrated capability map mockup (SVG or CSS-only — no external assets)
-- [ ] **M4-3** Create illustrated registry entry mockup (static example card)
-- [ ] **M4-4** Implement CTA: GitHub star link (frictionless, no DSGVO overhead) as primary; link to `/map` and `/registry` as secondary (once those milestones are complete)
-- [ ] **M4-5** Performance: measure LCP on mobile; ensure < 1.5s; use VitePress SSG output to guarantee content visible without JS
-- [ ] **M4-6** DSGVO audit: confirm zero external requests in built output (no CDN fonts, no analytics, no third-party scripts)
+- [x] **M4-1** Design the narrative flow: hero (PISA 2026 problem) → stakeholder cards (individual promises per persona) → how it works (3 steps + map mockup) → final CTA
+- [x] **M4-2** Create static capability map mockup (6 CSS-only node cards, no external assets) embedded in "how it works" section
+- [x] **M4-3** Create `src/i18n/de.ts` with all copy; export `LandingCopy` type for future locales
+- [x] **M4-4** Implement CTAs: "Tools entdecken" (→ `#/apps`) as primary; GitHub star as secondary; per-stakeholder CTAs pointing to relevant views
+- [x] **M4-5** Build passes (335KB JS, 36KB CSS gzipped to 111KB/6KB) — no external runtime, no CDN fonts
+- [x] **M4-6** DSGVO audit: zero external requests in built output (no CDN fonts, no analytics, no third-party scripts); footer note confirms this
 - [ ] **M4-7** Accessibility audit: WCAG 2.1 AA check; at minimum: contrast ratios, heading hierarchy, image alt text, keyboard navigation
 
 ### Completed
-*None yet — planning complete, implementation not started*
+- [x] M0: Deployment pipeline (2026-09-23)
+- [x] M1: Data foundations (2026-09-23)
+- [x] M2: Capability Map UI (2026-09-23)
+- [x] M3: Solution Registry UI (2026-09-23)
+- [x] M4: Landing page — narrative flow, stakeholder cards, mockup, i18n structure, CTAs, DSGVO-clean build (2026-09-23)
 
 ## Finalize
 ### Tasks

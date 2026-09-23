@@ -57,7 +57,7 @@
           <router-link
             v-for="entry in filteredEntries"
             :key="entry.id"
-            :to="`/registry/${entry.id}`"
+            :to="`/apps/${entry.id}`"
             class="block no-underline"
             role="listitem"
           >

@@ -49,7 +49,7 @@
           <router-link
             v-for="node in filteredNodes"
             :key="node.id"
-            :to="`/map/${node.id}`"
+            :to="`/catalog/${node.id}`"
             class="block no-underline"
             role="listitem"
           >
