@@ -114,6 +114,7 @@ requires: if-registry-read
 ```arc42
 :::diagram
 id: ctx-diagram
+view: context
 notation: mermaid
 aliases: actor_contributor=actor-contributor, actor_adopter=actor-adopter, actor_navigator=actor-navigator, actor_signal=actor-signal-reader, actor_github=actor-github, actor_tools=actor-external-tools, bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry
 :::

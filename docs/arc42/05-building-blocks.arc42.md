@@ -6,12 +6,13 @@ Arc42 chapter 5. The static decomposition of edugo into building blocks and thei
 
 edugo is a single deployable unit — a static site built from one repository. The building blocks
 below are logical separations within that unit, not independently deployed services. They share
-a build pipeline (`vp build`) and a deployment target (GitHub Pages), but each has distinct
-responsibilities, data sources, and rendering concerns.
+a build pipeline and a deployment target (GitHub Pages), but each has distinct responsibilities,
+data sources, and rendering concerns.
 
 ```arc42
 :::diagram
 id: bb-diagram
+view: building-block
 notation: mermaid
 aliases: bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry, bb_data=bb-data, bb_docs=bb-docs, bb_cicd=bb-cicd
 :::
@@ -52,8 +53,37 @@ Responsibility: story, calls to action, persona entry points, links to the capab
 :::building-block
 id: bb-website
 title: Website / Landing Page
-technology: Vue 3, Vite+, UnoCSS
+technology: Vue 3, Vite, UnoCSS
+path: src
 implements: concept-dsgvo-by-design
+:::
+```
+
+### Interface: Build Configuration
+
+Root-level Vite, UnoCSS, TypeScript, and npm configuration files that govern how the Vue app is assembled.
+
+```arc42
+:::interface
+id: if-build-config
+title: Build Configuration
+provider: bb-website
+protocol: Static files (Vite, UnoCSS, TypeScript config)
+path: vite.config.ts
+:::
+```
+
+### Interface: Root Project Configuration
+
+The npm package manifest and lock file that pin all dependencies.
+
+```arc42
+:::interface
+id: if-root-config
+title: Root Project Configuration
+provider: bb-website
+protocol: npm package manifest and lock file
+path: package.json
 :::
 ```
 
@@ -68,6 +98,7 @@ id: if-site-nav
 title: Website Navigation
 provider: bb-website
 protocol: HTML / SPA routing (Vue Router)
+path: src/main.ts
 :::
 ```
 
@@ -82,11 +113,18 @@ Responsibility: render capability nodes from data files; show coverage status; l
 entries; surface gap signals; provide a browsable and filterable view.
 
 ```arc42
+:::ignore W018 bb-website, bb-capability-map, and bb-registry are co-located Vue components in a flat SPA under src/. Each has a more specific path than src/ to make implementation traceability meaningful, but paths naturally overlap. There is no parent building-block because edugo has no sub-module hierarchy — all three are peer components of the same application.
+:::
+```
+
+```arc42
 :::building-block
 id: bb-capability-map
 title: Capability Map
-technology: Vue 3, Vite+, UnoCSS
+technology: Vue 3, Vite, UnoCSS
+path: src/views/CapabilityMapView.vue
 implements: concept-capability-map
+requires: if-site-nav
 :::
 ```
 
@@ -102,25 +140,32 @@ id: if-capability-map-read
 title: Capability Map Read
 provider: bb-capability-map
 protocol: HTML (rendered static page + client-side filter)
+path: src/composables/useCapabilityNodes.ts
 :::
 ```
 
 ## Solution Registry
 
 The tool catalog. Renders structured registry entries from YAML+Markdown data files. Supports
-client-side filtering by capability node, active/passive classification, DSGVO status, age
-range, subject, and cost. Displays trust signals (DSGVO badge, evidence level, architecture
-compliance). Links outbound to the actual tools.
+client-side filtering by capability node, DSGVO status, and capability links. Displays trust
+signals (DSGVO badge). Links outbound to the actual tools.
 
 Responsibility: render registry entries; compute and display trust signals; support client-side
 filtering; provide the GitHub PR contribution entry point.
 
 ```arc42
+:::ignore W018 same rationale as bb-capability-map: bb-registry is a peer Vue component in the flat SPA, its path overlaps with bb-website's src/ claim by design.
+:::
+```
+
+```arc42
 :::building-block
 id: bb-registry
 title: Solution Registry
-technology: Vue 3, Vite+, UnoCSS
-implements: concept-active-passive, concept-trust-signals, concept-composability
+technology: Vue 3, Vite, UnoCSS
+path: src/views/RegistryView.vue
+implements: concept-trust-signals, concept-composability
+requires: if-site-nav
 :::
 ```
 
@@ -135,6 +180,7 @@ id: if-registry-read
 title: Registry Read
 provider: bb-registry
 protocol: HTML (rendered static page + client-side filter)
+path: src/composables/useRegistryEntries.ts
 :::
 ```
 
@@ -149,6 +195,7 @@ id: if-submission-flow
 title: Submission Flow (GitHub PR)
 provider: bb-registry
 protocol: Deep-link to GitHub PR template (URL construction)
+path: src/views/RegistryView.vue
 :::
 ```
 
@@ -163,11 +210,21 @@ validates every PR that touches `data/` against these schemas before merging.
 Responsibility: persistent storage of all platform content; schema-validated structure;
 human-editable in the GitHub web UI; open format for programmatic consumption.
 
+The data layer has no named interface because it is consumed at build time via `import.meta.glob`
+— not through a runtime API. The capability map and registry building blocks read from it during
+the Vite build step, not at request time.
+
+```arc42
+:::ignore H004 bb-data has no named interface by design: it is consumed at Vite build time via import.meta.glob, not through a runtime API. The consumption is implicit in the build toolchain — there is no interface to model.
+:::
+```
+
 ```arc42
 :::building-block
 id: bb-data
 title: Data Layer
 technology: YAML frontmatter + Markdown, JSON Schema, GitHub Actions
+path: data
 implements: concept-data-formats, concept-schema-validation
 :::
 ```
@@ -183,11 +240,20 @@ them alongside other documentation pages.
 Responsibility: render architecture docs; publish builder patterns and contribution guidelines;
 serve as the living record of platform decisions.
 
+The docs building block has no named interface because it produces static HTML consumed by
+humans browsing the site — not by other building blocks.
+
+```arc42
+:::ignore H004 bb-docs has no named interface by design: it produces static HTML pages consumed by humans browsing the deployed site. Documentation is not consumed by other building blocks — there is no machine-to-machine interface to model.
+:::
+```
+
 ```arc42
 :::building-block
 id: bb-docs
 title: Architecture Guidelines and Docs
 technology: VitePress, arc42 CLI (authoring and validation)
+path: docs
 implements: concept-vitepress-arc42
 :::
 ```
@@ -199,14 +265,14 @@ The GitHub Actions workflows that validate, build, and deploy the platform on ev
 "server" in the system — the automated layer that enforces schema validity and produces the
 deployable artifact.
 
-Responsibility: schema validation on PRs; build (`vp build` + VitePress build) on merge to
-`main`; deploy to GitHub Pages.
+Responsibility: schema validation on PRs; build on merge to `main`; deploy to GitHub Pages.
 
 ```arc42
 :::building-block
 id: bb-cicd
 title: CI/CD Pipeline
-technology: GitHub Actions, Vite+, arc42 CLI
+technology: GitHub Actions, Vite, arc42 CLI
+path: .github/workflows
 :::
 ```
 
@@ -221,5 +287,6 @@ id: if-repo-push
 title: Repository Push / PR Event
 provider: bb-cicd
 protocol: GitHub Actions event (push, pull_request)
+path: .github/workflows/deploy.yml
 :::
 ```

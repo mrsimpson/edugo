@@ -38,11 +38,12 @@ try {
 
 const diags = data.diagnostics ?? []
 
-// E013 = DOMPurify/Node 24 bug in arc42 CLI — not our code, not actionable
-const realErrors = diags.filter(d => d.severity === 'error' && d.code !== 'E013')
+// E013 and E014 = DOMPurify/Node 24 bug in arc42 CLI — not our code, not actionable
+const domPurifyBugCodes = new Set(['E013', 'E014'])
+const realErrors = diags.filter(d => d.severity === 'error' && !domPurifyBugCodes.has(d.code))
 const warnings   = diags.filter(d => d.severity === 'warning')
 const hints      = diags.filter(d => d.severity === 'hint')
-const e013       = diags.filter(d => d.code === 'E013')
+const bugErrors  = diags.filter(d => domPurifyBugCodes.has(d.code))
 
 // Print findings
 for (const d of [...realErrors, ...warnings, ...hints]) {
@@ -50,8 +51,8 @@ for (const d of [...realErrors, ...warnings, ...hints]) {
   console.log(`${d.severity} ${d.code}  ${file}:${d.line}  ${d.message}`)
 }
 
-if (e013.length > 0) {
-  console.log(`\n(${e013.length} E013 errors suppressed — DOMPurify/Node 24 bug in arc42 CLI, not our code)`)
+if (bugErrors.length > 0) {
+  console.log(`\n(${bugErrors.length} E013/E014 errors suppressed — DOMPurify/Node 24 bug in arc42 CLI, not our code)`)
 }
 
 console.log(`\narc42 validate: ${realErrors.length} model errors, ${warnings.length} warnings, ${hints.length} hints`)

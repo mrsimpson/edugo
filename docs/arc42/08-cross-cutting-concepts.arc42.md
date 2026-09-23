@@ -47,6 +47,11 @@ referenced by JSON Schema. UI components treat level 1–4 as "active" and level
 for filter purposes, but all five levels are queryable.
 
 ```arc42
+:::ignore W001 concept-active-passive is a domain vocabulary — it shapes the data model and future filter UI, but no Phase 1 building block implements active/passive filtering yet. The taxonomy is defined but deferred to Phase 2.
+:::
+```
+
+```arc42
 :::concept
 id: concept-active-passive
 title: Active/Passive Taxonomy (5-level)
