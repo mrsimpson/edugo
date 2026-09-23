@@ -29,36 +29,6 @@ category: security
 :::
 ```
 
-## Active/Passive Taxonomy
-
-The five-level active/passive classification is first-class in the data model and the discovery
-UI. Every registry entry must declare its level. The taxonomy is:
-
-| Level | Name | What it means |
-|---|---|---|
-| 1 | Create | Students produce an artefact (text, image, video, code, game) |
-| 2 | Solve | Students work through a problem with agency (math, logic, language puzzle) |
-| 3 | Collaborate | Students interact meaningfully with peers to achieve a shared goal |
-| 4 | Reflect | Students evaluate, assess, or give feedback (on their own or others' work) |
-| 5 | Receive | Students watch, listen, or read without active output |
-
-The taxonomy is stored as a controlled vocabulary in `data/taxonomies/active-passive.yaml` and
-referenced by JSON Schema. UI components treat level 1–4 as "active" and level 5 as "passive"
-for filter purposes, but all five levels are queryable.
-
-```arc42
-:::ignore W001 concept-active-passive is a domain vocabulary — it shapes the data model and future filter UI, but no Phase 1 building block implements active/passive filtering yet. The taxonomy is defined but deferred to Phase 2.
-:::
-```
-
-```arc42
-:::concept
-id: concept-active-passive
-title: Active/Passive Taxonomy (5-level)
-category: domain
-:::
-```
-
 ## Trust Signals
 
 Trust signals are computed from structured metadata in registry entry files, not from editorial

@@ -76,6 +76,41 @@ requires: if-capability-map-read, if-registry-read
 :::
 ```
 
+## Arc42 Reader (Open-Source Contributor / Platform Maintainer)
+
+A developer building on or forking the platform, or a maintainer reviewing contributions, who
+reads the architecture documentation to understand building block responsibilities, key decisions,
+and contribution patterns. Interaction is read-only and technical: they consume the arc42 docs
+to orient themselves before writing code or reviewing a PR.
+
+```arc42
+:::actor
+id: actor-arc42-reader
+title: Arc42 Reader (Contributor / Maintainer)
+type: person
+description: Reads architecture documentation to understand building block responsibilities, decisions, and contribution patterns
+requires: if-docs-nav, if-arc42-docs-read
+:::
+```
+
+## Evaluator (Partner / Funder / Institutional Adopter)
+
+A foundation, public institution, or potential partner who wants to understand what edugo is,
+what it aims to achieve, how it is organised, and how it is financed before deciding to engage.
+Interaction is read-only and strategic: they consume the business model documentation (scope,
+objectives, risks, products, cashflow) rather than the capability map or registry. The biz42
+docs are their primary entry point.
+
+```arc42
+:::actor
+id: actor-evaluator
+title: Evaluator (Partner / Funder / Institution)
+type: person
+description: Assesses platform purpose, objectives, organisational structure, and financial model before deciding to engage or fund
+requires: if-business-model
+:::
+```
+
 ## GitHub
 
 GitHub acts as the sole backend: it hosts the repository, runs CI/CD via GitHub Actions, serves
@@ -116,7 +151,7 @@ requires: if-registry-read
 id: ctx-diagram
 view: context
 notation: mermaid
-aliases: actor_contributor=actor-contributor, actor_adopter=actor-adopter, actor_navigator=actor-navigator, actor_signal=actor-signal-reader, actor_github=actor-github, actor_tools=actor-external-tools, bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry
+aliases: actor_contributor=actor-contributor, actor_adopter=actor-adopter, actor_navigator=actor-navigator, actor_signal=actor-signal-reader, actor_arc42=actor-arc42-reader, actor_evaluator=actor-evaluator, actor_github=actor-github, actor_tools=actor-external-tools, bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry, bb_arc42=bb-arc42-docs, bb_biz42=bb-biz42-docs
 :::
 ```
 
@@ -126,6 +161,8 @@ graph LR
     bb_website["Website / Landing Page"]
     bb_cap["Capability Map"]
     bb_reg["Solution Registry"]
+    bb_arc42["Architecture Docs"]
+    bb_biz42["Business Model Docs"]
   end
 
   actor_contributor["Contributor (Builder)"] -->|if-capability-map-read| bb_cap
@@ -135,6 +172,8 @@ graph LR
   actor_navigator["Navigator"] -->|if-capability-map-read| bb_cap
   actor_signal["Signal Reader"] -->|if-capability-map-read| bb_cap
   actor_signal -->|if-registry-read| bb_reg
+  actor_arc42["Arc42 Reader"] -->|if-arc42-docs-read| bb_arc42
+  actor_evaluator["Evaluator"] -->|if-business-model| bb_biz42
   actor_github["GitHub"] -->|if-repo-push| edugo
   bb_reg -->|outbound link| actor_tools["External Tools"]
 ```

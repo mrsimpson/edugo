@@ -34,7 +34,7 @@ id: dn-github-pages
 title: GitHub Pages (Static Host / CDN)
 type: server
 parent: dn-github
-hosts: bb-website, bb-capability-map, bb-registry, bb-docs
+hosts: bb-website, bb-capability-map, bb-registry, bb-docs-site, bb-arc42-docs, bb-biz42-docs
 :::
 ```
 

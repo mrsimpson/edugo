@@ -10,4 +10,4 @@ npx lint-staged
 
 # 2. arc42 validate — always check architecture docs integrity
 # (not file-scoped — arc42 validates the whole model, not individual files)
-node scripts/arc42-validate.mjs
+npm run arc42:validate

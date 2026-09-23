@@ -14,7 +14,7 @@
 | `.vibe/docs/requirements.md:110-127` | Four personas: Contributor (Builder), Adopter (Teacher), Navigator, Signal Reader | ch.3 / actors | high | — |
 | `.vibe/docs/requirements.md:133-178` | Functional requirements FR-01 through FR-08 | ch.5 / building blocks | high | — |
 | `.vibe/docs/requirements.md:254-264` | NFRs: <1.5s load on mobile, zero trackers, WCAG 2.1 AA, works without JS, all data in open formats | ch.10 / quality goals and scenarios | high | — |
-| `.vibe/docs/requirements.md:145-152` | Active/Passive taxonomy: Create/Solve/Collaborate/Reflect/Receive — first-class in discovery | ch.8 / concept-active-passive, ch.5 / bb-registry | high | — |
+| `.vibe/docs/requirements.md:145-152` | Active/Passive taxonomy removed from architecture model — deferred indefinitely | — | — | Removed from ch.8 and ch.12 per product owner decision |
 | `.vibe/docs/requirements.md:153-158` | Trust signals: DSGVO status (green/amber/red/unknown), evidence level, architecture compliance badge | ch.8 / concept-trust-signals | high | — |
 | `.vibe/docs/requirements.md:169-173` | Fork & composability: fork relationships visible, one-click fork for open-source entries | ch.8 / concept-composability | high | — |
 | `.vibe/development-plan.md:KD-06` | GitHub as backend is a feature, not a constraint: it models the pattern edugo recommends | ch.4 / strategy | high | — |

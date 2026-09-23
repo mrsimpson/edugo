@@ -44,7 +44,7 @@ jobs:
         run: npm install -g @doctc/arc42@0.24.0
 
       - name: Install biz42 CLI
-        run: npm install -g biz42
+        run: npm install -g @mrsimpson/biz42
 
       - name: Validate arc42 architecture docs
         run: node scripts/arc42-validate.mjs

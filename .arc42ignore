@@ -39,3 +39,11 @@ README.md
 # Schema sources and validation scripts (build tooling, not deployable components)
 schemas
 scripts
+
+# AI agent scaffolding and skills lockfile (not deployable components)
+.agents
+skills-lock.json
+
+# End-to-end tests and test runner config (test tooling, not deployable components)
+e2e
+playwright.config.ts

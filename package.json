@@ -17,7 +17,7 @@
     "generate-schemas": "tsx schemas/generate.ts",
     "check-schemas": "tsx schemas/generate.ts --check",
     "typecheck": "vue-tsc --noEmit",
-    "arc42:validate": "node scripts/arc42-validate.mjs",
+    "arc42:validate": "arc42 validate",
     "biz42:validate": "biz42 validate",
     "biz42:build": "biz42 build --out dist/about --base /edugo/about/",
     "biz42:serve": "biz42 serve",
@@ -26,7 +26,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "docs/arc42/**/*.arc42.md": "node scripts/arc42-validate.mjs",
+    "docs/arc42/**/*.arc42.md": "bash -c 'arc42 validate --strict'",
     "data/**/*.md": "tsx scripts/validate-data.ts",
     "schemas/**/*.ts": "tsx schemas/generate.ts --check",
     "src/**/*.{ts,vue}": [

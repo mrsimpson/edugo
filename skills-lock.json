@@ -1,11 +1,23 @@
 {
   "version": 1,
   "skills": {
+    "arc42-language": {
+      "source": "doctoolchain/arc42-language",
+      "sourceType": "github",
+      "skillPath": "packages/skill/SKILL.md",
+      "computedHash": "acce98733ddf788c42e5f50cff53564888366ded9d9520aae0b1f037f37d2b8d"
+    },
     "biz42": {
       "source": "mrsimpson/biz42",
       "sourceType": "github",
       "skillPath": "packages/skill/SKILL.md",
       "computedHash": "e9e222d77b71639fa8e61d32643ec05a8ba40c535dc5c95e17300f69d6b2f9ab"
+    },
+    "biz42-context": {
+      "source": "doctoolchain/arc42-language",
+      "sourceType": "github",
+      "skillPath": "packages/skill-biz42-context/SKILL.md",
+      "computedHash": "d2e41b84358f8c38025b811f9516fb36d0b51c9f3d9c7dcb24026f6aee200498"
     }
   }
 }

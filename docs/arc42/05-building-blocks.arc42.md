@@ -14,7 +14,7 @@ data sources, and rendering concerns.
 id: bb-diagram
 view: building-block
 notation: mermaid
-aliases: bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry, bb_data=bb-data, bb_docs=bb-docs, bb_cicd=bb-cicd
+aliases: bb_website=bb-website, bb_cap=bb-capability-map, bb_reg=bb-registry, bb_data=bb-data, bb_arc42=bb-arc42-docs, bb_biz42=bb-biz42-docs, bb_docs=bb-docs-site, bb_cicd=bb-cicd
 :::
 ```
 
@@ -25,7 +25,10 @@ graph TD
     bb_cap["Capability Map"]
     bb_reg["Solution Registry"]
     bb_data["Data Layer\n(YAML + Markdown files)"]
-    bb_docs["Architecture Guidelines & Docs"]
+    subgraph bb_docs["Docs Site"]
+      bb_arc42["Architecture Guidelines & Docs"]
+      bb_biz42["Business Model Docs"]
+    end
     bb_cicd["CI/CD Pipeline"]
   end
 
@@ -229,10 +232,45 @@ implements: concept-data-formats, concept-schema-validation
 :::
 ```
 
-## Architecture Guidelines & Docs
+## Docs Site
+
+The VitePress site that renders all documentation: architecture guidelines, contribution guides,
+vision, and business model. It is a single static site built from `docs/` and deployed as a
+subdirectory of the GitHub Pages artifact. Its two content areas — arc42 architecture docs and
+biz42 business model docs — are modelled as child building blocks with distinct responsibilities
+and audiences.
+
+Responsibility: VitePress site configuration, shared layout, navigation, and non-specialised
+pages (vision, contributing guidelines).
+
+```arc42
+:::building-block
+id: bb-docs-site
+title: Docs Site
+technology: VitePress
+path: docs
+:::
+```
+
+### Interface: Docs Site Navigation
+
+The top-level navigation consumed by all human actors browsing the docs site: arc42 reader,
+evaluator, contributor, and maintainer.
+
+```arc42
+:::interface
+id: if-docs-nav
+title: Docs Site Navigation
+provider: bb-docs-site
+protocol: HTML (static VitePress pages)
+path: docs
+:::
+```
+
+### Architecture Guidelines & Docs
 
 VitePress-rendered documentation covering the arc42 architecture (sourced from `docs/arc42/`),
-contribution guidelines, builder patterns, and the active/passive taxonomy. This building block
+contribution guidelines, builder patterns, and architecture decisions. This building block
 is the vehicle for edugo's third platform job: providing architecture guidelines to app builders.
 Arc42 CLI is used for authoring and validation of the architecture documents; VitePress renders
 them alongside other documentation pages.
@@ -240,21 +278,65 @@ them alongside other documentation pages.
 Responsibility: render architecture docs; publish builder patterns and contribution guidelines;
 serve as the living record of platform decisions.
 
-The docs building block has no named interface because it produces static HTML consumed by
-humans browsing the site — not by other building blocks.
-
 ```arc42
-:::ignore H004 bb-docs has no named interface by design: it produces static HTML pages consumed by humans browsing the deployed site. Documentation is not consumed by other building blocks — there is no machine-to-machine interface to model.
+:::building-block
+id: bb-arc42-docs
+title: Architecture Guidelines and Docs
+technology: VitePress, arc42 CLI (authoring and validation)
+path: docs/arc42
+parent: bb-docs-site
+implements: concept-vitepress-arc42
 :::
 ```
 
+#### Interface: Architecture Documentation Read
+
+The read interface consumed by open-source contributors and platform maintainers who need to
+understand building block responsibilities, key decisions, and contribution patterns.
+
+```arc42
+:::interface
+id: if-arc42-docs-read
+title: Architecture Documentation Read
+provider: bb-arc42-docs
+protocol: HTML (static VitePress pages)
+path: docs/arc42
+:::
+```
+
+### Business Model Docs
+
+VitePress-rendered documentation covering the platform's scope, objectives, risks, products,
+and financial model (sourced from `docs/biz42/`). This building block is the strategic entry
+point for evaluators — partners, funders, and institutional adopters — who want to understand
+what edugo is, what it aims to achieve, how it is organised, and how it is financed before
+deciding to engage. Authored using the biz42 DSL and validated with the biz42 CLI.
+
+Responsibility: publish the platform's business model in a readable, navigable form; serve as
+the authoritative record of organisational scope, objectives, and financial model.
+
 ```arc42
 :::building-block
-id: bb-docs
-title: Architecture Guidelines and Docs
-technology: VitePress, arc42 CLI (authoring and validation)
-path: docs
-implements: concept-vitepress-arc42
+id: bb-biz42-docs
+title: Business Model Docs
+technology: VitePress, biz42 CLI (authoring and validation)
+path: docs/biz42
+parent: bb-docs-site
+:::
+```
+
+#### Interface: Business Model Documentation Read
+
+The strategic read interface consumed by evaluators who want to understand the platform's
+purpose, organisation, and financial model.
+
+```arc42
+:::interface
+id: if-business-model
+title: Business Model Documentation Read
+provider: bb-biz42-docs
+protocol: HTML (static VitePress pages)
+path: docs/biz42
 :::
 ```
 

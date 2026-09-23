@@ -64,18 +64,6 @@ definition: A classroom teacher who browses the registry to find tools that are 
 :::
 ```
 
-## Active/Passive Taxonomy
-
-The five-level classification of educational tools by the type of student engagement they require. Levels in ascending order of active engagement: Create (1), Solve (2), Collaborate (3), Reflect (4), Receive (5). First-class in the data model and the discovery UI.
-
-```arc42
-:::glossary-term
-id: gl-active-passive
-title: Active/Passive Taxonomy
-definition: The five-level classification of educational tools by the type of student engagement they require. Levels: Create (1), Solve (2), Collaborate (3), Reflect (4), Receive (5). First-class in the data model and the discovery UI.
-:::
-```
-
 ## DSGVO Status
 
 A trust signal on each registry entry indicating its data protection compliance posture. Values are: green (verified compliant), amber (probably fine, unverified), red (known issues), unknown. A frontend-only app with no backend receives an automatic green badge.

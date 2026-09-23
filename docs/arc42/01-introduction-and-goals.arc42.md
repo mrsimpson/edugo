@@ -48,5 +48,5 @@ measurable scenarios.
 | Adopter (Classroom Teacher) | Busy teacher, DSGVO-anxious, time-poor | Trust signals visible at a glance; active-learning filter first-class; works on mobile |
 | Navigator | School principal or digital coordinator | Overview of capability coverage per school context; trusted entries clearly distinguished |
 | Signal Reader | Researcher or policy advisor | Machine-readable data in open formats; capability map shows real gaps over time |
-| Platform Maintainer | Repo maintainer reviewing PRs | Schema-validated contributions; low-friction CI; clear data format docs |
-| Open-source contributor | Developer building on or forking the platform | Documented architecture; clear building block responsibilities; forkable at zero cost |
+| Evaluator | Partner, funder, or institutional adopter assessing whether to engage | Clear platform purpose, objectives, risks, products, and financial model in one place |
+| Arc42 Reader | Open-source contributor or platform maintainer reviewing PRs | Documented architecture; clear building block responsibilities; forkable at zero cost; schema-validated contributions |
