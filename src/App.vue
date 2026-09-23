@@ -1,5 +1,11 @@
 <template>
   <div class="min-h-screen bg-gray-50">
+    <!-- Skip navigation link for keyboard users -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-blue-700 focus:font-semibold focus:rounded focus:shadow"
+    >Zum Inhalt springen</a>
+
     <!-- Hide the app nav on the landing page — it has its own full-page layout -->
     <header
       v-if="!isLanding"
@@ -31,7 +37,7 @@
         </a>
       </nav>
     </header>
-    <main>
+    <main id="main-content">
       <router-view />
     </main>
   </div>

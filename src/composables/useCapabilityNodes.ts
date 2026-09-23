@@ -37,7 +37,7 @@ let _nodes: CapabilityNodeWithBody[] | null = null
 function loadNodes(): CapabilityNodeWithBody[] {
   if (_nodes) return _nodes
   _nodes = Object.entries(rawFiles)
-    .map(([path, raw]) => {
+    .map(([_path, raw]) => {
       const { fm, body } = parseFrontmatter(raw)
       return { ...fm, body } as CapabilityNodeWithBody
     })

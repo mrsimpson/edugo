@@ -9,7 +9,7 @@
   KD-40: pure system-ui sans-serif throughout; no serif, no external fonts
 -->
 <template>
-  <div class="min-h-screen bg-slate-900 text-white" style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">
+  <div class="min-h-screen bg-slate-900 text-white" id="main-content" style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;">
 
     <!-- ══════════════════════════════════════════
          HERO — punchline, then problem cards, then explanation
@@ -31,7 +31,7 @@
         >
           {{ copy.hero.headline }}
         </h1>
-        <p class="text-slate-400 mb-12" style="font-size: clamp(1rem, 2vw, 1.25rem);">
+        <p class="text-slate-300 mb-12" style="font-size: clamp(1rem, 2vw, 1.25rem);">
           {{ copy.hero.subtitle }}
         </p>
 
@@ -50,7 +50,10 @@
               :class="activePersona === key
                 ? 'bg-blue-600 text-white border-blue-600'
                 : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-blue-500 hover:text-white'"
+              :tabindex="activePersona === key ? 0 : -1"
               @click="selectPersona(key)"
+              @keydown.right.prevent="selectNextPersona(key)"
+              @keydown.left.prevent="selectPrevPersona(key)"
             >
               <span aria-hidden="true">{{ p.problem.icon }}</span>
               {{ p.problem.role }}
@@ -139,7 +142,10 @@
             :class="activePersona === key
               ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
               : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-700'"
+            :tabindex="activePersona === key ? 0 : -1"
             @click="selectPersona(key)"
+            @keydown.right.prevent="selectNextPersona(key)"
+            @keydown.left.prevent="selectPrevPersona(key)"
           >
             <span aria-hidden="true">{{ p.solution.icon }}</span>
             {{ p.solution.role }}
@@ -161,13 +167,12 @@
                 <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
                   {{ personaMap[activePersona].solution.role }}
                 </p>
-                <h2
-                  id="solutions-heading"
+                <h3
                   class="font-bold text-slate-900 leading-snug"
                   style="font-size: clamp(1.125rem, 2.5vw, 1.5rem);"
                 >
                   {{ personaMap[activePersona].solution.headline }}
-                </h2>
+                </h3>
               </div>
             </div>
 
@@ -310,6 +315,16 @@ function selectPersona(key: PersonaKey) {
   activePersona.value = key
   personaLocked.value = true
   stopAutoAdvance()
+}
+
+function selectNextPersona(current: PersonaKey) {
+  const idx = PERSONA_KEYS.indexOf(current)
+  selectPersona(PERSONA_KEYS[(idx + 1) % PERSONA_KEYS.length])
+}
+
+function selectPrevPersona(current: PersonaKey) {
+  const idx = PERSONA_KEYS.indexOf(current)
+  selectPersona(PERSONA_KEYS[(idx - 1 + PERSONA_KEYS.length) % PERSONA_KEYS.length])
 }
 
 // ── Auto-advance ───────────────────────────────────────────────────────────

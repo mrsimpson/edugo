@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "oxlint --jsx-a11y-plugin --vue-plugin src/",
     "build": "vite build",
     "build:full": "npm run build && npm run docs:build && node -e \"const fs=require('fs');fs.mkdirSync('dist/docs',{recursive:true});fs.cpSync('docs/dist','dist/docs',{recursive:true})\"",
     "preview": "vite preview --base /edugo/",
@@ -23,13 +24,14 @@
     "docs/arc42/**/*.arc42.md": "node scripts/arc42-validate.mjs",
     "data/**/*.md": "tsx scripts/validate-data.ts",
     "schemas/**/*.ts": "tsx schemas/generate.ts --check",
-    "src/**/*.{ts,vue}": "bash -c 'vue-tsc --noEmit --incremental false'"
+    "src/**/*.{ts,vue}": ["bash -c 'vue-tsc --noEmit --incremental false'", "oxlint --jsx-a11y-plugin --vue-plugin"]
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
     "@unocss/preset-wind4": "^66.10.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "oxlint": "^1.85.0",
     "tsx": "^4.23.15",
     "typescript": "~5.7",
     "unocss": "^66.10.5",

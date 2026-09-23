@@ -118,7 +118,7 @@
               <p class="text-sm font-medium text-gray-900">{{ similar.title }}</p>
               <p v-if="similar.teaser" class="text-xs text-gray-500 mt-0.5">{{ similar.teaser }}</p>
             </div>
-            <span class="text-blue-600 text-sm shrink-0 ml-3">→</span>
+            <span class="text-blue-600 text-sm shrink-0 ml-3" aria-hidden="true">→</span>
           </router-link>
         </div>
       </section>
