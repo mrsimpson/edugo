@@ -111,18 +111,58 @@ Anecdotal → Community-validated → Research-backed. DSGVO shown honestly: gre
 
 - [x] Write README.md — terse, engaging, explains vision and principles
 - [x] Write docs/vision.md — full elaboration of roles, gaps, principles, delivery strategy
+- [x] Remove generated .vibe/docs/architecture.md — architecture will use arc42 CLI
+- [x] Push all ideation artefacts to main
 
 ### Completed
 - [x] All Ideation tasks completed (2026-09-23)
 
 ---
 
+### KD-12: GitHub is Phase 1 Implementation of a Forge-Agnostic Pattern
+GitHub chosen because it has the largest contributor community and lowest onboarding friction — reach is the primary constraint in Phase 1. The underlying pattern is "Git-hosting provider as backend", not "GitHub specifically". The data layer (YAML+MD files under `data/`) must contain zero GitHub-specific markup. All forge-specific implementation (Actions workflows, PR templates, CODEOWNERS) isolated under `.github/`. A future migration to GitLab, Gitea, Forgejo, or delta.dev requires rewriting `.github/` only — no data migration. Adapter layer for multi-forge support is a future option once contributor base is established.
+- **Decision**: Forge-agnostic data layer; GitHub first for reach; migration path is rewrite of `.github/` only.
+
+### KD-13: Technology Stack
+- **Frontend framework**: Vue 3 — progressive enhancement compatible, composition API suits capability map filtering, same framework as VitePress
+- **Toolchain**: Vite+ (`vp` CLI) — unified build/lint/format/test under one tool, Rolldown-powered fast builds
+- **Styling**: UnoCSS with preset-wind4 — first-class Vite integration, generates only used CSS, Tailwind v4 compatible
+- **Docs rendering**: VitePress — Vue-native, renders arc42 `.arc42.md` files as pages, deploys to static files
+- **Deployment**: GitHub Pages — zero cost, consistent with GitHub-as-backend constraint
+
+### KD-14: Repository Structure
+- **Flat repo** (no monorepo packages in Phase 1): Vue app at root, VitePress docs under `docs/`, data under `data/`
+- Monorepo can be introduced later if the capability map component needs to be published as a standalone npm package
+
+### KD-15: Data Format
+- **YAML frontmatter + Markdown body** for all capability nodes and registry entries
+- **JSON Schema** files under `schemas/` define required structure
+- **CI Action** validates every PR touching `data/` against schemas before merge (forge-agnostic tooling, adapter per forge)
+
+### KD-16: VitePress + arc42 Coexistence
+- arc42 source files (`.arc42.md`) live in `docs/arc42/`
+- arc42 CLI used for authoring and validation (`arc42 validate`, `arc42 serve`)
+- VitePress renders arc42 chapters as standard Markdown pages in the docs site
+- VitePress deployed to `/docs/` on GitHub Pages; main Vue app deployed to `/`
+
+### KD-17: Arc42 Validation Status (2026-09-23)
+- 0 errors in model (3 E013 are arc42 CLI v0.0.10 + Node 24 DOMPurify bug — not our code)
+- 2 warnings (W019/W020 — caused by E013 preventing flowchart diagram parsing — diagrams exist and are correct)
+- 13 hints (all H014 "no implementation path" — expected pre-code; paths added as code is written)
+
 ## Architecture
 ### Tasks
-- [ ] *To be added when this phase becomes active*
+- [x] Clarify monorepo vs flat structure decision
+- [x] Decide data format for capability nodes and registry entries (YAML + MD + JSON Schema)
+- [x] Decide VitePress + arc42 CLI coexistence model
+- [x] Decide CSS strategy (UnoCSS)
+- [x] Decide deployment target (GitHub Pages)
+- [x] Author arc42 chapters 1-12 in docs/arc42/
+- [x] Create architecture-evidence.md
+- [x] Validate arc42 workspace (arc42 validate — 0 model errors)
 
 ### Completed
-*None yet*
+- [x] All Architecture tasks completed (2026-09-23)
 
 ## Plan
 ### Tasks
