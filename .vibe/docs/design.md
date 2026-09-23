@@ -56,35 +56,78 @@ No file in the repository may reference any account-specific secret, username, o
 
 ### 2.1 The capability map is a structured wiki, not a taxonomy tree
 
-Capability nodes are flat, well-tagged articles about learning outcomes — not nodes in a hierarchy. There is no `parent` field, no tree to navigate, no placement decisions to make. The "map" is the queryable space of all capability articles. Different users navigate different projections of the same flat dataset: the Contributor sees the gap view (status: needed), the Adopter filters by subject and age, the Navigator groups by KMK domain.
+Capability nodes are flat, well-tagged articles about learning outcomes — not nodes in a hierarchy. There is no `parent` field, no tree to navigate, no placement decisions. The "map" is the queryable space of all capability articles. Different users navigate different projections of the same flat dataset: the Contributor sees the gap view (`status: needed`), the Adopter filters by subject and age band, the Navigator groups by KMK domain.
 
-**Defect signal:** if the capability model requires a placement decision ("does this node belong under domain 5 or domain 6?"), the model is wrong — the node should carry both as facet values.
+The litmus test for a capability node: *can you imagine 2–5 genuinely different tools that address this node?* If yes, the grain is right. If only one tool could ever match, the node is too narrow. If fifty tools match, it is too broad.
+
+**Defect signal:** if the capability model requires a placement decision ("does this node belong under domain 5 or domain 6?"), the model is wrong — the node should carry both as `kmk-domains` facet values.
 
 ### 2.2 Facets describe; they do not organize
 
-A capability node's facets (KMK domain alignment, subject areas, age range, active/passive type) are multi-value tags for discovery and navigation. They do not impose structure. A node may align to multiple KMK domains, multiple subjects, and a broad age range simultaneously. This reflects how cognitive outcomes actually work in education — they are not discrete, subject-locked, or age-bounded.
+All facets on capability nodes and registry entries are multi-value tags for discovery. They do not impose structure. KMK domain alignment is a multi-value facet (`kmk-domains: [5, 6]`) — not a structural parent. Subject alignment is multi-value. Age range is a band, not a strict bound.
 
-**Defect signal:** if a facet field is single-value and mandatory, it is probably being used as a structural organizer rather than a discovery tag — reconsider whether it should be multi-value and optional.
+**Defect signal:** if a facet field is single-value and mandatory, it is probably being used as a structural organizer rather than a discovery tag — reconsider.
 
-### 2.3 Capability node identity
+### 2.3 Discovery filters on capability nodes
 
-A capability node's `id` is its slug: lowercase, hyphen-separated, English, unique across `data/capabilities/`. It is permanent — once published, a node ID is never renamed (entries reference it by ID). Deprecation is via a `deprecated: true` field and a `replaced-by` reference, never by deleting the file.
+Capability nodes carry only what is needed to navigate the map:
+- `status` — required; `needed` / `partial` / `well-covered`; the gap signal
+- `kmk-domains` — optional, multi-value; populated by maintainers, not contributors; for institutional navigation
 
-### 2.4 Registry entry identity
+Subject, age, and active/passive facets do **not** belong on capability nodes. Learning outcomes are not subject-specific or age-bounded — a specific tool for them is. These facets live on registry entries only.
 
-A registry entry's `id` is the slug of the tool it describes. It is unique across `data/entries/`. The file name is `{id}.md`. If a tool is forked, the fork gets a new ID; the `forked-from` field records the parent ID. IDs are not namespaced by author — the tool's identity, not the author's identity, is what's permanent.
+### 2.4 Discovery filters on registry entries
 
-### 2.5 Controlled vocabularies are files, not code
+Registry entries carry facets that answer the teacher's practical questions:
+- `capabilities` — required; multi-value array of capability node IDs
+- `dsgvo` — optional; defaults to `unknown`; `frontend-only` is the strongest trust signal
+- `teaser` — optional; one German sentence visible on the card; the hook that makes a teacher click; not a filter but a display field that must be in frontmatter (not the Markdown body)
+- `source-url` — optional; without it the entry is a dead end
 
-The active/passive taxonomy, DSGVO status values, evidence levels, KMK domain slugs, and subject area slugs are defined in `data/taxonomies/` as YAML files — not as TypeScript enums or hardcoded arrays in component files. A new vocabulary value is added by editing one taxonomy file. No component or schema changes required unless the new value needs a new UI treatment.
+Facets deferred to future phases (schema supports them via `x-` prefix until graduated):
+- `subjects`, `min-age`/`max-age`, `classroom-moment`, `setup-time`
+- Active/passive classification (the capability node description conveys this implicitly for now)
 
-### 2.6 Schema evolution is additive
+**Minimum required to be listed:** `id` + `title` + at least one `capabilities` reference. DSGVO defaults to `unknown`.
 
-New optional fields may be added at any time. Existing required fields are never removed — that is a major version bump requiring a data migration. The minimum required fields for a registry entry to be listed are: `id`, `title`, one `capabilities` reference, and `active-passive`. Everything else is optional. DSGVO defaults to `unknown` if absent — honest, not blocked.
+### 2.5 Teaser is a frontmatter field, not body content
 
-### 2.7 Markdown body is display content, not structured data
+The `teaser` field (one German sentence) lives in YAML frontmatter so it is available at card render time without loading the full Markdown body. It is the single most important display field for the teacher discovery flow. Optional, but the contribution guide strongly encourages it.
 
-The Markdown body of a capability node or registry entry is freeform display content. It renders as rich text and is never parsed for structured values. All queryable values live in the YAML frontmatter. A filter or query that depends on Markdown body content is a design defect.
+**Defect signal:** if the entry card renders the Markdown body to extract a preview sentence, something is wrong — the teaser belongs in frontmatter.
+
+### 2.6 Schema extensibility via `x-` prefix
+
+Any YAML frontmatter field beginning with `x-` is explicitly permitted by the schema and ignored by the platform UI. This allows contributors to experiment with new fields without schema changes:
+
+```yaml
+x-lehrplan-bayern: "M7 Stochastik"   # community experiment
+x-classroom-moment: einstieg          # future field being tested before graduation
+```
+
+When an `x-` field proves broadly useful, a PR graduates it to a named optional field in the schema. This is the only path from experiment to core field — no silent promotion.
+
+The JSON Schema rule: `patternProperties: { "^x-": {} }` combined with `additionalProperties: false` for all other fields.
+
+### 2.7 Schema versioning
+
+Schema files are versioned in their filename: `schemas/registry-entry.v1.schema.json`. The validator always uses the current version. Breaking changes (removing or renaming a required field) increment the version and require a migration PR that updates all existing entries. Additive changes (new optional fields) do not increment the version.
+
+### 2.8 Capability node identity
+
+A capability node's `id` is its slug: lowercase, hyphen-separated, English, unique across `data/capabilities/`. It is permanent. Deprecation uses `deprecated: true` + `replaced-by` — never file deletion.
+
+### 2.9 Registry entry identity
+
+A registry entry's `id` is the slug of the tool. It is unique across `data/entries/`. The file name is `{id}.md`. IDs are not namespaced by author.
+
+### 2.10 Controlled vocabularies are files, not code
+
+DSGVO status values, KMK domain IDs, and any future taxonomy values are defined in `data/taxonomies/` as YAML files — not TypeScript enums or hardcoded arrays. Adding a vocabulary value means editing one file only.
+
+### 2.11 Schema evolution is additive
+
+New optional fields may be added at any time without a version bump. Removing or renaming a required field is a major version change requiring a migration. The `x-` prefix convention provides a safe experimentation path before any field becomes core.
 
 ---
 

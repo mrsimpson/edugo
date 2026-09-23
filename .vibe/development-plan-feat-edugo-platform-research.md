@@ -180,14 +180,30 @@ Use `actions/configure-pages`, `actions/upload-pages-artifact`, and `actions/dep
 ### KD-19: Capability Map is a Structured Wiki, Not a Taxonomy Tree
 Capability nodes are flat, well-tagged articles about learning outcomes. No parent/child hierarchy — no placement decisions, no tree. The "map" is a queryable space of all capability articles. Different users navigate different projections: Contributor sees gap view (status: needed), Adopter filters by subject + age, Navigator groups by KMK domain. An app may address multiple outcomes; an outcome may align to multiple KMK domains and subjects. This is handled by multi-value facet fields, not by duplicating nodes in a tree.
 
-Facets on a capability node: `kmk-domains` (multi-value, for institutional navigation), `subjects` (multi-value), `min-age`, `max-age`, `active-passive` (multi-value — what kinds of engagement this outcome requires). Minimum required: `id`, `title`, `status`. Everything else optional but encouraged for discoverability.
+Facets on a **capability node** (multi-value, all optional except id/title/status):
+- `kmk-domains` — institutional alignment facet for Navigator navigation; does NOT impose structure
+- Minimum required: `id`, `title`, `status`
 
-Facets on a registry entry: `capabilities` (multi-value — which outcomes this tool addresses), `active-passive` (what the student actually does in this tool), `dsgvo`, `min-age`, `max-age`, `subjects`. Minimum required: `id`, `title`, one `capabilities` reference, `active-passive`. DSGVO defaults to `unknown`.
+Facets on a **registry entry** (all optional except the 4 required):
+- Required: `id`, `title`, one `capabilities` reference, `active-passive`
+- Optional: `dsgvo` (defaults to `unknown`; `frontend-only` is auto-trust), `subjects`, `min-age`/`max-age`, `teaser` (one German sentence visible on card — the discovery hook), `classroom-moment` (Einstieg/Erarbeitung/Sicherung/Differenzierung/Vertretungsstunde), `setup-time` (sofort/10-minuten/planung), `source-url`
 
-Seed strategy: 6–10 real learning outcomes derived from tools that already exist in the community (not KMK list-crawling). Seed from the Contributor persona first — outcomes where real tools could immediately be registered.
+Seed strategy: 6–10 real learning outcomes spanning at least 3 subjects, 2 age bands, 3 active/passive levels. Derived from real tool examples. Start with the Contributor persona — outcomes where real apps could immediately be registered.
 
 ### KD-20: Filter State in URL
-All active filter state (domain, active-passive level, DSGVO status, gap-only toggle) is encoded as URL query parameters. This makes filtered views bookmarkable and shareable. The gap view is a named filter preset (`?gap=true`), not a separate route. Filter composable reads from and writes to `useRoute()` / `useRouter()`.
+All active filter state (kmk-domain, DSGVO status, gap-only toggle) is encoded as URL query parameters. Filtered views are bookmarkable and shareable. The gap view is a named filter preset (`?gap=true`), not a separate route. Filter composable reads from and writes to `useRoute()` / `useRouter()`.
+
+### KD-24: Active/Passive Classification Deferred to Future Phase
+Dropped as a required or optional schema field for Phase 1. The capability node description already conveys what students will be doing — a tool that claims to address "Students develop probabilistic intuition through simulation" is by definition active. Explicit active/passive classification adds contributor friction for marginal discovery gain in Phase 1. Added to requirements as a named future capability for when filtering by engagement type becomes a real user need.
+
+### KD-25: Schema Extensibility via `x-` Prefix + Additive Evolution
+All fields beyond the 3-field minimum (`id`, `title`, `capabilities`) are optional. Extension fields prefixed with `x-` are always permitted by the schema and ignored by the platform UI — contributors can experiment with new fields without schema changes or PRs to the schema. Graduation path: when an `x-` field proves broadly useful, a PR adds it as a named optional field. Schema files versioned in filename (`v1`, `v2`) — version bumps only for breaking changes (removal/rename of required fields). Additive changes never require a version bump.
+
+### KD-26: KMK Tagging is Maintainer Work, Not Contributor Work
+`kmk-domains` is an optional multi-value facet on capability nodes. It is populated by platform maintainers — not required from contributors. Contributors write a German outcome description; maintainers add the KMK alignment tags. This keeps contribution friction minimal while ensuring KMK accuracy. KMK sub-competency detail (~40 sub-competencies) is a future refinement targeting school directors and Schulaufsicht — added to requirements as a named future capability.
+
+### Completed
+- [x] Plan phase completed (2026-09-23)
 
 ### Completed
 - [x] Plan phase completed (2026-09-23)
@@ -219,58 +235,58 @@ All active filter state (domain, active-passive level, DSGVO status, gap-only to
 *Acceptance: `data/` directory structure exists with schemas and seed data; schema validation CI workflow passes on a correct PR and fails on a malformed PR; a contributor can understand what to submit by reading `docs/contributing.md`.*
 
 #### Taxonomies (controlled vocabularies — flat YAML files)
-- [ ] **M1-1** Create `data/taxonomies/active-passive.yaml` — 5 values: Create / Solve / Collaborate / Reflect / Receive; each with `id` (English slug), `label` (German), `description` (one sentence German)
-- [ ] **M1-2** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only` (auto-green, no backend), `claimed-compliant` (contributor-asserted), `unknown` (default); labels + one-line explanation
-- [ ] **M1-3** Create `data/taxonomies/kmk-domains.yaml` — 6 KMK Kompetenzrahmen domains; each with `id`, `number` (1–6), `title` (German), `short` (one-word German label for UI chips)
-- [ ] **M1-4** Create `data/taxonomies/subjects.yaml` — common German school subjects as controlled vocabulary; multi-value on both nodes and entries
+- [ ] **M1-1** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only` (no backend, structurally safe), `claimed-safe` (contributor-asserted), `unknown` (default); German labels + one-line explanation of what each means in practice
+- [ ] **M1-2** Create `data/taxonomies/kmk-domains.yaml` — 6 KMK Kompetenzrahmen domains; each with `id` (slug), `number` (1–6), `title` (full German), `short` (one-word German label for UI chips)
 
-#### Schemas (JSON Schema — validate YAML frontmatter)
-- [ ] **M1-5** Create `schemas/capability-node.schema.json`:
-  - Required: `id` (slug), `title` (German string), `status` (needed/partial/well-covered)
-  - Optional: `kmk-domains` (array of kmk-domain ids), `subjects` (array of subject ids), `min-age`, `max-age`, `active-passive` (array — what kinds of engagement this outcome involves)
-  - Body: freeform Markdown — not validated by schema
-- [ ] **M1-6** Create `schemas/registry-entry.schema.json`:
-  - Required: `id` (slug), `title` (string), `capabilities` (non-empty array of capability node ids), `active-passive` (single value from taxonomy)
-  - Optional: `dsgvo` (defaults to `unknown`), `backend` (if `none` → auto trust signal), `subjects`, `min-age`, `max-age`, `source-url`, `forked-from`, `evidence`, `classroom-scenario` (Markdown string)
+#### Schemas (JSON Schema v1 — validate YAML frontmatter on PR)
+- [ ] **M1-3** Create `schemas/capability-node.v1.schema.json`:
+  - Required: `id` (slug pattern), `title` (non-empty German string), `status` (enum: `needed`/`partial`/`well-covered`)
+  - Optional: `kmk-domains` (array of kmk-domain ids — maintainer-populated, not required from contributors)
+  - Extension: `patternProperties: { "^x-": {} }` + `additionalProperties: false` for all other fields
+- [ ] **M1-4** Create `schemas/registry-entry.v1.schema.json`:
+  - Required: `id` (slug pattern), `title` (non-empty string), `capabilities` (array, minItems: 1, items reference capability node ids)
+  - Optional: `dsgvo` (enum from dsgvo-status vocabulary, defaults to `unknown`), `teaser` (string, max 200 chars), `source-url` (URI format)
+  - Extension: `patternProperties: { "^x-": {} }` + `additionalProperties: false` for all other fields
+  - No `active-passive` field — deferred; capability node description conveys student engagement implicitly
 
-#### Seed data (from real-world examples, not KMK crawling)
-- [ ] **M1-7** Create 6–8 capability node files under `data/capabilities/` — derive from tool examples that already exist (e.g. argument evaluation, probabilistic reasoning through simulation, collaborative text production, peer feedback, computational thinking). Write German titles and rich Markdown descriptions. Tag with applicable facets. All set to `status: needed` initially.
-- [ ] **M1-8** Create 2 illustrative registry entry files under `data/entries/` as worked examples for contributors — describe the kinds of apps discussed in planning (essay-comparison, Yahtzee-probabilistics) as fictional but realistic entries. Include classroom scenario.
+#### Seed data (spanning 3 subjects, 2 age bands, varied cognitive types)
+- [ ] **M1-5** Create 6–8 capability node files under `data/capabilities/` — derive from real tool examples (argument evaluation, probabilistic reasoning via simulation, collaborative text production, peer feedback, computational thinking, media production). German titles, rich Markdown bodies explaining what students learn and why it matters. Required fields only (`id`, `title`, `status: needed`). `kmk-domains` tags added by maintainer after creation.
+- [ ] **M1-6** Create 2 illustrative registry entry files under `data/entries/` as contributor reference examples — the essay-comparison critical thinking app and the Yahtzee probabilistics app, described as realistic entries with `teaser` and `source-url` filled in. Markdown body includes a classroom scenario.
 
 #### CI validation and contribution flow
-- [ ] **M1-9** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/**`; uses `ajv-cli` to validate changed files against their schema; fails PR on schema error with readable output; runs without Pages permissions (safe for fork PRs)
-- [ ] **M1-10** Write `docs/contributing.md` — the complete guide for adding a capability node or registry entry via GitHub web UI; includes field reference, worked example, and what happens after PR is merged
-- [ ] **M1-11** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md` — checklist template for node PRs: title is German, facets are filled, status is `needed`, Markdown body explains the outcome
-- [ ] **M1-12** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md` — checklist template for entry PRs: capability reference exists, active-passive set, DSGVO field present, classroom scenario included if possible
+- [ ] **M1-7** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/**`; uses `ajv-cli` with `--spec draft2020` to validate changed files against their schema (detected by path: `data/capabilities/` → capability-node schema, `data/entries/` → registry-entry schema); fails PR with readable error output; runs without Pages permissions
+- [ ] **M1-8** Write `docs/contributing.md` — guide for adding a capability node or registry entry via GitHub web UI; minimum fields explained clearly; `teaser` field highlighted as the most important optional field; `x-` extension convention explained; explicitly states "your first submission doesn't need to be complete — we'll help fill in the gaps"
+- [ ] **M1-9** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md` — checklist: title is German, status is `needed`, Markdown body explains the outcome with the "2–5 tools" litmus test
+- [ ] **M1-10** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md` — checklist: capabilities array references at least one existing node ID, teaser is one German sentence, DSGVO field is set if known, Markdown body includes a classroom scenario
 
 ### Milestone M2: Capability Map UI
-*Acceptance: `/edugo/map` renders capability nodes from data files; facet filters (KMK domain, subject, active-passive, gap toggle) work client-side via URL params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*
+*Acceptance: `/edugo/map` renders capability nodes from data files; KMK domain filter and gap toggle work client-side via URL params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*
 
 - [ ] **M2-1** Scaffold Vue 3 app at repo root: `src/main.ts`, `src/App.vue`, Vue Router config
 - [ ] **M2-2** Configure Vite with UnoCSS (preset-wind4) and `import.meta.glob` for loading `data/` files at build time
-- [ ] **M2-3** Implement composable `useCapabilityNodes()` — loads and parses all `data/capabilities/*.md`; exposes flat array of nodes with parsed frontmatter; no graph assembly (flat model)
-- [ ] **M2-4** Implement composable `useTaxonomies()` — loads all `data/taxonomies/*.yaml`; exposes vocabulary maps keyed by taxonomy id; used by filter components and badge renderers
-- [ ] **M2-5** Implement composable `useCapabilityMapFilters()` — reads/writes URL query params; exposes filtered node list; filter dimensions: `kmk` (multi), `subject` (multi), `active-passive` (multi), `gap` (boolean preset for status: needed/partial)
-- [ ] **M2-6** Create `CapabilityNodeCard.vue` — title, status badge (needed=red/partial=amber/well-covered=green), KMK domain chips, linked entry count; clicking navigates to detail
-- [ ] **M2-7** Create `CapabilityMapFilterPanel.vue` — KMK domain checkboxes, subject filter, active-passive filter, gap toggle; writes to URL params via composable
-- [ ] **M2-8** Create `CapabilityMapView.vue` (route `/map`) — filterable grid of CapabilityNodeCards; filter panel; default view shows all nodes; gap preset shows only needed/partial
-- [ ] **M2-9** Create `CapabilityNodeDetailView.vue` (route `/map/:id`) — full Markdown body rendered, all facet tags displayed, linked registry entries listed, "build this" CTA for gap nodes that opens contribution flow pre-selecting the node
-- [ ] **M2-10** Wire Vue Router: `/` → (VitePress home or landing component), `/map` → CapabilityMapView, `/map/:id` → CapabilityNodeDetailView, `/registry` → (stub for M3)
-- [ ] **M2-11** Accessibility: keyboard navigation for filter panel; aria-labels on status badges; focus trap in filter panel on mobile
+- [ ] **M2-3** Implement composable `useCapabilityNodes()` — loads and parses all `data/capabilities/*.md`; exposes flat array of nodes with parsed frontmatter; no graph assembly needed
+- [ ] **M2-4** Implement composable `useTaxonomies()` — loads all `data/taxonomies/*.yaml`; exposes vocabulary maps keyed by taxonomy id for use in filter components and badge renderers
+- [ ] **M2-5** Implement composable `useCapabilityMapFilters()` — reads/writes URL query params; filter dimensions: `kmk` (multi-value), `gap` (boolean preset for status: needed/partial); exposes filtered node list
+- [ ] **M2-6** Create `CapabilityNodeCard.vue` — title, status badge (needed=red/partial=amber/well-covered=green), KMK domain chips, linked entry count; 3-second scannable layout
+- [ ] **M2-7** Create `CapabilityMapFilterPanel.vue` — KMK domain checkboxes with result counts, gap toggle; writes to URL params; shows how many nodes match each filter value
+- [ ] **M2-8** Create `CapabilityMapView.vue` (route `/map`) — filterable grid of CapabilityNodeCards; gap preset as default for Contributor entry point; full view for Adopter/Navigator entry point
+- [ ] **M2-9** Create `CapabilityNodeDetailView.vue` (route `/map/:id`) — full Markdown body rendered, KMK domain tags displayed, linked registry entries listed as entry cards, "build this" CTA for gap nodes that pre-selects the node in contribution flow
+- [ ] **M2-10** Wire Vue Router: `/` → (VitePress home), `/map` → CapabilityMapView, `/map/:id` → CapabilityNodeDetailView, `/registry` → (stub for M3)
+- [ ] **M2-11** Accessibility: keyboard navigation for filter panel; aria-labels on status badges; result count announced to screen readers on filter change
 
 ### Milestone M3: Solution Registry UI
-*Acceptance: `/edugo/registry` renders registry entries from data files; all filter dimensions (capability, active/passive, DSGVO, age range) work client-side; trust signal badges display correctly; contribution CTA opens a pre-filled GitHub PR.*
+*Acceptance: `/edugo/registry` renders registry entries from data files; filters (subject, age, active/passive, DSGVO, classroom-moment) work client-side via URL params; DSGVO trust badges display correctly; the teaser is visible on the card; contribution CTA opens a pre-filled GitHub PR.*
 
-- [ ] **M3-1** Implement data composable `useRegistryEntries()` — loads all `data/entries/*.md` at build time via `import.meta.glob`, parses YAML frontmatter
-- [ ] **M3-2** Implement trust signal composable `useTrustSignals(entry)` — computes: DSGVO badge from `dsgvo` field + automatic green if `backend: none`; evidence badge from `evidence` field; frontend-only badge if `backend: none`; architecture-compliance badge if declared
-- [ ] **M3-3** Implement filter composable `useRegistryFilters()` — URL-encoded filter state for: capability node (multi-select), active-passive level (multi-select), DSGVO status, age range, subject
-- [ ] **M3-4** Create `TrustSignalBadge.vue` — renders a single trust signal (icon + label + tooltip with explanation); used by entry card
-- [ ] **M3-5** Create `RegistryEntryCard.vue` — title, description excerpt, capability node tags, active-passive level badge, trust signal row (using TrustSignalBadge), links to source and detail
-- [ ] **M3-6** Create `RegistryFilterPanel.vue` — capability node selector (filterable), active-passive checkboxes, DSGVO status filter, age range filter; writes to URL params
-- [ ] **M3-7** Create `RegistryView.vue` (route `/registry`) — grid of RegistryEntryCards with FilterPanel; empty state with contribution CTA
-- [ ] **M3-8** Create `RegistryEntryDetailView.vue` (route `/registry/:id`) — full entry: all metadata fields, trust signals, classroom scenario (Unterrichtsidee), fork lineage, links
-- [ ] **M3-9** Implement contribution CTA: a button that constructs a GitHub PR URL with pre-filled template params and opens it in a new tab (no server call)
-- [ ] **M3-10** Add "submit an entry" link from capability node detail pages to the contribution flow, pre-selecting the node
+- [ ] **M3-1** Implement composable `useRegistryEntries()` — loads and parses all `data/entries/*.md`; exposes flat array of entries with parsed frontmatter; cross-references capability node titles for display
+- [ ] **M3-2** Implement composable `useTrustSignals(entry)` — computes DSGVO badge: `frontend-only` → green structural badge; `claimed-safe` → amber self-declared badge; `unknown` → grey; no other trust signals in Phase 1
+- [ ] **M3-3** Implement composable `useRegistryFilters()` — URL-encoded filter state for: `active-passive` (multi), `dsgvo` (multi), `subject` (multi), `min-age`/`max-age` (range), `classroom-moment` (multi); shows result counts per filter value to prevent dead-end filtering
+- [ ] **M3-4** Create `DsgvoBadge.vue` — renders the DSGVO trust signal (icon + label + tooltip explaining what it means); the primary trust signal in Phase 1
+- [ ] **M3-5** Create `ActivePassiveBadge.vue` — renders the active/passive classification with color and German label
+- [ ] **M3-6** Create `RegistryEntryCard.vue` — **recipe-card layout**: title, `teaser` (one German sentence — the hook, prominently displayed), active/passive badge, DSGVO badge, subject chips; 3-second scannable; no click needed to decide if worth exploring
+- [ ] **M3-7** Create `RegistryFilterPanel.vue` — active/passive checkboxes, subject filter, DSGVO filter, age range, classroom-moment filter; all with result counts; writes to URL params
+- [ ] **M3-8** Create `RegistryView.vue` (route `/registry`) — grid of RegistryEntryCards with FilterPanel; empty state with prominent contribution CTA; "show similar" links between entries sharing a capability node
+- [ ] **M3-9** Create `RegistryEntryDetailView.vue` (route `/registry/:id`) — full Markdown body rendered, all metadata fields displayed, DSGVO badge explained, capability node links, `source-url` CTA
+- [ ] **M3-10** Implement contribution CTA: constructs a GitHub PR URL with pre-filled template params (capability node pre-selected if coming from node detail) and opens in new tab — no server call
 
 ### Milestone M4: Landing Page (Phase 0 polish)
 *Acceptance: the home page (`/`) is a compelling, polished narrative page; it tells the problem/vision/mechanism story; it visually illustrates the capability map concept; it has a clear CTA; it is fast, accessible, and DSGVO-clean.*
