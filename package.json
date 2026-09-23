@@ -13,14 +13,28 @@
     "docs:preview": "vitepress preview docs",
     "validate-data": "tsx scripts/validate-data.ts",
     "generate-schemas": "tsx schemas/generate.ts",
-    "check-schemas": "tsx schemas/generate.ts --check"
+    "check-schemas": "tsx schemas/generate.ts --check",
+    "typecheck": "vue-tsc --noEmit",
+    "arc42:validate": "node scripts/arc42-validate.mjs",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "docs/arc42/**/*.arc42.md": "node scripts/arc42-validate.mjs",
+    "data/**/*.md": "tsx scripts/validate-data.ts",
+    "schemas/**/*.ts": "tsx schemas/generate.ts --check",
+    "src/**/*.{ts,vue}": "bash -c 'vue-tsc --noEmit --incremental false'"
   },
   "devDependencies": {
+    "@types/node": "^26.6.2",
     "@unocss/preset-wind4": "^66.10.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
     "tsx": "^4.23.15",
+    "typescript": "~5.7",
     "unocss": "^66.10.5",
     "vitepress": "^1.6.4",
     "vue-router": "^4.6.4",
+    "vue-tsc": "^3.3.11",
     "yaml": "^2.9.1",
     "zod": "^4.6.5",
     "zod-to-json-schema": "^3.25.2"

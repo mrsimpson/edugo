@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+# Pre-commit hook: run all quality checks before committing
+# Runs: lint-staged (data validation + typecheck for changed files)
+#       arc42 validate (always, regardless of what changed)
+
+set -e
+
+# 1. Run lint-staged for file-specific checks
+npx lint-staged
+
+# 2. arc42 validate — always check architecture docs integrity
+# (not file-scoped — arc42 validates the whole model, not individual files)
+node scripts/arc42-validate.mjs

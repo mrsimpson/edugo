@@ -2,7 +2,7 @@
  * useRegistryEntries — loads all data/entries/*.md at build time.
  * Parses YAML frontmatter and exposes flat array of typed entries.
  */
-import { ref, readonly, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { parse as parseYaml } from 'yaml'
 import type { RegistryEntry } from '../../schemas/registry-entry.js'
 
@@ -39,8 +39,8 @@ function loadEntries(): RegistryEntryWithBody[] {
 }
 
 export function useRegistryEntries(): {
-  entries: Readonly<Ref<RegistryEntryWithBody[]>>
+  entries: Ref<RegistryEntryWithBody[]>
 } {
   const entries = ref<RegistryEntryWithBody[]>(loadEntries())
-  return { entries: readonly(entries) }
+  return { entries }
 }

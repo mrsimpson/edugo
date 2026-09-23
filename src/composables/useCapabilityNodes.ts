@@ -6,7 +6,7 @@
  * - 1.4: All loading at build time via import.meta.glob, no runtime requests
  * - 1.1: Data is the source of truth; this composable is a read-only view
  */
-import { ref, readonly, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { parse as parseYaml } from 'yaml'
 import type { CapabilityNode } from '../../schemas/capability-node.js'
 
@@ -46,8 +46,8 @@ function loadNodes(): CapabilityNodeWithBody[] {
 }
 
 export function useCapabilityNodes(): {
-  nodes: Readonly<Ref<CapabilityNodeWithBody[]>>
+  nodes: Ref<CapabilityNodeWithBody[]>
 } {
   const nodes = ref<CapabilityNodeWithBody[]>(loadNodes())
-  return { nodes: readonly(nodes) }
+  return { nodes }
 }
