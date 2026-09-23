@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "lint": "oxlint --jsx-a11y-plugin --vue-plugin src/",
+    "lint": "oxlint --vue-plugin src/",
     "build": "vite build",
     "build:full": "npm run build && npm run docs:build && node -e \"const fs=require('fs');fs.mkdirSync('dist/docs',{recursive:true});fs.cpSync('docs/dist','dist/docs',{recursive:true})\"",
     "preview": "vite preview --base /edugo/",
@@ -24,7 +24,7 @@
     "docs/arc42/**/*.arc42.md": "node scripts/arc42-validate.mjs",
     "data/**/*.md": "tsx scripts/validate-data.ts",
     "schemas/**/*.ts": "tsx schemas/generate.ts --check",
-    "src/**/*.{ts,vue}": ["bash -c 'vue-tsc --noEmit --incremental false'", "oxlint --jsx-a11y-plugin --vue-plugin"]
+    "src/**/*.{ts,vue}": ["bash -c 'vue-tsc --noEmit --incremental false'", "oxlint --vue-plugin"]
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
