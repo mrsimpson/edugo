@@ -10,7 +10,7 @@
 <template>
   <article
     class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col gap-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer h-full"
-    :aria-label="t.registry.entryCardAriaLabel(entry.title)"
+    aria-hidden="true"
   >
     <!-- Title + DSGVO badge -->
     <div class="flex items-start justify-between gap-2">
@@ -52,7 +52,7 @@
         {{ sourceDomain }}
       </span>
       <span v-else class="text-gray-400">{{ t.registry.entryNoLink }}</span>
-      <span class="text-blue-600 font-medium shrink-0">{{ t.common.details }}</span>
+      <span class="text-blue-600 font-medium shrink-0">Details <span aria-hidden="true">→</span></span>
     </div>
   </article>
 </template>

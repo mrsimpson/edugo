@@ -60,6 +60,7 @@
             :to="`/apps/${entry.id}`"
             class="block no-underline"
             role="listitem"
+            :aria-label="t.registry.entryCardAriaLabel(entry.title)"
           >
             <RegistryEntryCard :entry="entry" :nodes="nodes" />
           </router-link>

@@ -52,6 +52,7 @@
             :to="`/catalog/${node.id}`"
             class="block no-underline"
             role="listitem"
+            :aria-label="t.catalog.nodeCardAriaLabel((nodesWithCounts[node.id] ?? node).title)"
           >
             <CapabilityNodeCard :node="nodesWithCounts[node.id] ?? node" />
           </router-link>

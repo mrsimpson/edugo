@@ -11,7 +11,7 @@
 <template>
   <article
     class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col gap-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
-    :aria-label="t.catalog.nodeCardAriaLabel(node.title)"
+    aria-hidden="true"
   >
     <!-- Status badge + title -->
     <div class="flex items-start gap-3">
@@ -49,7 +49,7 @@
         {{ t.catalog.nodeToolCount(node.linkedEntryCount ?? 0) }}
       </span>
       <span v-else class="text-amber-600 font-medium">{{ t.catalog.nodeNoTools }}</span>
-      <span class="text-blue-600 font-medium">{{ t.common.details }}</span>
+      <span class="text-blue-600 font-medium">Details <span aria-hidden="true">→</span></span>
     </div>
   </article>
 </template>
