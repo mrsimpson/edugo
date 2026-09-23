@@ -104,19 +104,25 @@ graph TD
 
 ## Build Output Structure
 
-The two build outputs are merged under a single deploy root to avoid base-path conflicts:
+The Vue SPA owns the deploy root. VitePress docs and arc42 architecture docs are
+placed in subdirectories to avoid base-path conflicts. This layout was adopted in
+Phase 1 to allow GitHub Pages to serve the SPA at the canonical `/edugo/` URL
+without a redirect layer (see ADR-08).
 
 ```
-deploy-root/
-├── index.html          # Website landing page (Vue app entry)
-├── assets/             # Vue app JS/CSS bundle (Vite+ output)
-├── capability-map/     # Capability map SPA routes
-├── registry/           # Registry SPA routes
-└── docs/               # VitePress docs site
-    ├── index.html
-    └── arc42/          # arc42 chapters rendered as pages
+dist/                        # deploy root (uploaded as GitHub Pages artifact)
+├── index.html               # Vue SPA entry (landing page at /#/)
+├── assets/                  # Vue app JS/CSS bundle (Vite build output)
+├── docs/                    # VitePress docs site (built to docs/dist/, copied here)
+│   ├── index.html
+│   ├── vision.html
+│   └── contributing.html
+├── architecture/            # arc42 docs (arc42 build --out dist/architecture)
+│   └── index.html
+└── schemas/                 # Published JSON Schemas for editor/CI consumption
+    ├── capability-node.json
+    └── registry-entry.json
 ```
 
-The base path for the Vue app is `/` (or the GitHub Pages repo sub-path if deployed under a
-user/org repo rather than a custom domain). VitePress is configured with `base: '/docs/'` to
-match the deploy root structure.
+The Vue app is configured with `base: '/edugo/'` (Vite config). VitePress uses
+`base: '/edugo/docs/'`. arc42 CLI builds with `--base /edugo/architecture/`.

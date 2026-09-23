@@ -1,0 +1,49 @@
+- generic [ref=e3]:
+  - link "Zum Inhalt springen" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - link "edugo" [ref=e6] [cursor=pointer]:
+      - /url: "#/"
+    - navigation "Hauptnavigation" [ref=e7]:
+      - link "Kompetenzkatalog" [ref=e8] [cursor=pointer]:
+        - /url: "#/catalog"
+      - link "Apps" [ref=e9] [cursor=pointer]:
+        - /url: "#/apps"
+      - link "GitHub" [ref=e10] [cursor=pointer]:
+        - /url: https://github.com/mrsimpson/edugo
+  - main [ref=e11]:
+    - generic [ref=e262]:
+      - link "← Kompetenzkarte" [ref=e263] [cursor=pointer]:
+        - /url: "#/catalog"
+      - generic [ref=e264]:
+        - 'generic "Status: Teilweise abgedeckt" [ref=e266]': Teilweise abgedeckt
+        - heading "Argumente erkennen, bewerten und eigene Urteile bilden" [level=1] [ref=e267]
+        - generic "KMK-Kompetenzbereich" [ref=e268]:
+          - generic [ref=e269]: KMK 6 · Analysieren und Reflektieren
+          - generic [ref=e270]: KMK 2 · Kommunizieren und Kooperieren
+      - generic "Beschreibung der Kompetenz" [ref=e271]:
+        - paragraph [ref=e272]: Schülerinnen und Schüler können in einem Text oder einer Aussage Argumente identifizieren, deren Qualität einschätzen und begründet Stellung nehmen. Sie unterscheiden zwischen Behauptung, Begründung und Belegen, erkennen logische Fehlschlüsse und können eigene Argumentationsketten aufbauen.
+        - heading "Warum diese Fähigkeit wichtig ist" [level=2] [ref=e273]
+        - paragraph [ref=e274]: Digitale Medien produzieren täglich Millionen von Aussagen, Meinungen und Behauptungen. Die Fähigkeit, Argumente zu bewerten, ist keine akademische Disziplin — sie ist Überlebensvoraussetzung in einer Informationsgesellschaft. Schüler, die nicht zwischen "jemand sagt etwas" und "das ist gut begründet" unterscheiden können, sind in sozialen Netzwerken, bei politischen Entscheidungen und im Berufsleben benachteiligt.
+        - heading "Unterrichtsszenarien" [level=2] [ref=e275]
+        - list [ref=e276]:
+          - listitem [ref=e277]:
+            - strong [ref=e278]: Deutsch / Sozialwissenschaften (Kl. 8–10)
+            - text: ": Analyse von Leserbriefen oder Social-Media-Posts auf Argumentationsstruktur"
+          - listitem [ref=e279]:
+            - strong [ref=e280]: Geschichte (Kl. 9–12)
+            - text: ": Quellenkritik — wer spricht, welche Interessen, welche Belege?"
+          - listitem [ref=e281]:
+            - strong [ref=e282]: Philosophie / Ethik
+            - text: ": Strukturierte Kontroverse — Positionen zuweisen, Gegenargumente erarbeiten"
+        - heading "Litmus-Test" [level=2] [ref=e283]
+        - paragraph [ref=e284]: Welches Tool würde hier passen? Eines, das Schüler Argumente einreichen, bewerten und diskutieren lässt — mit strukturiertem Feedback und der Möglichkeit, die eigene Meinung zu revidieren. Mindestens 2–3 Tools könnten diese Lücke füllen.
+      - generic [ref=e285]:
+        - heading "Tools für diese Kompetenz (1)" [level=2] [ref=e286]
+        - 'link "Essay-Vergleich: Argumentationsqualität bewerten Schüler laden zwei Aufsätze hoch und entscheiden, welches Argument überzeugender ist — und warum. DSGVO-Status: frontend-only" [ref=e288] [cursor=pointer]':
+          - /url: "#/apps/essayvergleich-kritisches-denken"
+          - generic [ref=e289]:
+            - generic [ref=e290]:
+              - paragraph [ref=e291]: "Essay-Vergleich: Argumentationsqualität bewerten"
+              - paragraph [ref=e292]: Schüler laden zwei Aufsätze hoch und entscheiden, welches Argument überzeugender ist — und warum.
+            - 'generic "DSGVO-Status: frontend-only" [ref=e293]': Frontend-only

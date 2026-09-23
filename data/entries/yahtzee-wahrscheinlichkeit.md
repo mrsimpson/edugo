@@ -2,7 +2,7 @@
 id: yahtzee-wahrscheinlichkeit
 title: "Besser Yahtzee spielen: Wahrscheinlichkeiten durch Würfelsimulation entdecken"
 capabilities:
-  - wahrscheinlichkeit-durch-simulation
+  - angewandte-mathematik
 dsgvo: frontend-only
 teaser: "Schüler entdecken, warum die 7 am häufigsten fällt — durch eigene Simulation, nicht durch Formel."
 source-url: https://github.com/example/yahtzee-probability

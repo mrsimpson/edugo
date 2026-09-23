@@ -58,7 +58,7 @@ The registry lives in structured files in this repo. Contributions are pull requ
 
 Early. The idea is solid. The landing page comes first.
 
-If you're a teacher who has built something, an educator who wants to find something, or a developer who wants to build something — [watch this space / get in touch].
+If you're a teacher who has built something, an educator who wants to find something, or a developer who wants to build something — [open the platform](https://mrsimpson.github.io/edugo/) or [watch the repo](https://github.com/mrsimpson/edugo).
 
 ---
 

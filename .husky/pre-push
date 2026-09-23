@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# Pre-push hook: run smoke tests against the live site before pushing to main.
+# Skipped on non-main branches so feature branch pushes don't block.
+
+set -e
+
+BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "detached")
+
+if [ "$BRANCH" = "main" ]; then
+  echo "Running smoke tests against live site before push to main..."
+  npx playwright test --reporter=list
+fi

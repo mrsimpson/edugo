@@ -1,0 +1,53 @@
+- generic [ref=e3]:
+  - link "Zum Inhalt springen" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - link "edugo" [ref=e6] [cursor=pointer]:
+      - /url: "#/"
+    - navigation "Hauptnavigation" [ref=e7]:
+      - link "Kompetenzkatalog" [ref=e8] [cursor=pointer]:
+        - /url: "#/catalog"
+      - link "Apps" [ref=e9] [cursor=pointer]:
+        - /url: "#/apps"
+      - link "GitHub" [ref=e10] [cursor=pointer]:
+        - /url: https://github.com/mrsimpson/edugo
+  - main [ref=e11]:
+    - generic [ref=e294]:
+      - link "← Apps" [ref=e295] [cursor=pointer]:
+        - /url: "#/apps"
+      - generic [ref=e296]:
+        - generic [ref=e297]:
+          - 'heading "Essay-Vergleich: Argumentationsqualität bewerten" [level=1] [ref=e298]'
+          - 'generic "DSGVO-Status: Frontend-only" [ref=e299]':
+            - generic [aria-hidden] [ref=e300]: 🛡
+            - text: Frontend-only
+        - paragraph [ref=e301]: „Schüler laden zwei Aufsätze hoch und entscheiden, welches Argument überzeugender ist — und warum."
+        - 'link "Essay-Vergleich: Argumentationsqualität bewerten öffnen" [ref=e302] [cursor=pointer]':
+          - /url: https://github.com/example/essay-compare
+          - text: https://github.com/example/essay-compare ↗
+      - 'note "Datenschutzhinweis: Frontend-only" [ref=e303]':
+        - generic [ref=e304]:
+          - paragraph [ref=e305]: Frontend-only
+          - paragraph [ref=e306]: Kein Backend — strukturell keine Datenweitergabe möglich
+      - generic [ref=e307]:
+        - heading "Adressierte Kompetenzen" [level=2] [ref=e308]
+        - link "Argumente erkennen, bewerten und eigene Urteile bilden" [ref=e310] [cursor=pointer]:
+          - /url: "#/catalog/argumente-bewerten"
+      - generic "Beschreibung des Tools" [ref=e312]:
+        - heading "Was dieses Tool tut" [level=2] [ref=e313]
+        - paragraph [ref=e314]: "Eine browserbasierte Anwendung, die zwei Texte nebeneinander zeigt und Schüler systematisch durch einen Vergleich führt: Welche Behauptungen werden aufgestellt? Sind Belege vorhanden? Welches Argument ist logisch stärker? Am Ende formulieren Schüler ein begründetes Urteil."
+        - paragraph [ref=e315]: Das Tool speichert nichts — kein Login, kein Backend. Texte werden nur im Browser verarbeitet.
+        - heading "Klassenzimmer-Szenario" [level=2] [ref=e316]
+        - paragraph [ref=e317]:
+          - strong [ref=e318]: Fach
+          - text: ": Deutsch oder Sozialkunde, Klasse 9–12"
+          - strong [ref=e319]: Phase
+          - text: ": Erarbeitungsphase (ca. 25 Minuten)"
+        - list [ref=e320]:
+          - listitem [ref=e321]: Lehrkraft bereitet zwei Texte vor (z.B. zwei Leserbriefe zur selben Frage)
+          - listitem [ref=e322]: Schüler öffnen das Tool, laden die Texte ein (copy/paste oder Datei)
+          - listitem [ref=e323]: "Das Tool führt durch strukturierte Analysefragen: Wo ist die Hauptthese? Was sind die Belege?"
+          - listitem [ref=e324]: Jede Schülerin notiert ihr Urteil mit Begründung
+          - listitem [ref=e325]: "Plenumsdiskussion: Welche Argumente wurden unterschiedlich bewertet?"
+        - heading "Warum frontend-only" [level=2] [ref=e326]
+        - paragraph [ref=e327]: Kein Text verlässt den Browser. Keine Nutzerdaten werden erhoben. Das Tool kann offline betrieben werden. Für Schultexte und Schülerarbeiten strukturell unbedenklich.

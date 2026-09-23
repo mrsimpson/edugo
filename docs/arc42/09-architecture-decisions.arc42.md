@@ -216,3 +216,87 @@ date: 2026-09-23
 addresses: qg-performance-mobile, risk-mobile-perf-budget
 :::
 ```
+
+## ADR-08: Vue SPA Owns the Deploy Root — VitePress at /docs/ Subdirectory
+
+**Context:** Both the Vue SPA and the VitePress docs site need to be served from GitHub Pages
+under the same repo path (`/edugo/`). Options: VitePress owns the root and Vue is at a sub-path;
+Vue owns the root and VitePress is at a sub-path; they are separate repos.
+
+**Decision:** The Vue SPA owns the deploy root (`dist/`). VitePress output is copied to
+`dist/docs/`. arc42 output goes to `dist/architecture/`. JSON Schemas go to `dist/schemas/`.
+
+**Rationale:** The primary user-facing URL (`https://mrsimpson.github.io/edugo/`) should serve
+the landing page and SPA, not a documentation index. The landing page is the acquisition and
+navigation layer; docs are secondary. VitePress's `base: '/edugo/docs/'` setting cleanly
+isolates it. This avoids any redirect layer and keeps the SPA router in full control of `/#/`
+routes.
+
+**Consequences:** `npm run build:full` or CI must explicitly copy `docs/dist/` → `dist/docs/`
+after the VitePress build. The `docs:build` output directory is `docs/dist` (VitePress default
+when `srcDir: '.'` is set). The CI workflow handles this with a `cp -r docs/dist/. dist/docs/`
+step.
+
+```arc42
+:::decision
+id: adr-08-spa-owns-root
+title: Vue SPA owns deploy root; VitePress and arc42 at subdirectory paths
+status: accepted
+date: 2026-09-23
+addresses: con-github-pages, qg-contributor-friendliness
+:::
+```
+
+## ADR-09: Landing Page in Vue SPA, Not VitePress
+
+**Context:** Phase 0 required a polished landing page. Options: build it as a custom VitePress
+theme page; build it as a Vue component in the SPA; use a separate HTML file.
+
+**Decision:** The landing page is `LandingView.vue` at hash route `/#/` in the Vue SPA.
+
+**Rationale:** A single styling system (UnoCSS) and a single deploy artifact are strongly
+preferred. A custom VitePress theme would require a separate styling context and CSS reset. The
+Vue SPA already has UnoCSS, the router, and the component model needed for the persona tabs,
+auto-advance animation, and i18n. Building the landing page in Vue avoids the two-framework
+problem entirely.
+
+**Consequences:** The app navigation bar is conditionally hidden on `route.path === '/'` to
+give the landing page a full-screen layout. All copy lives in `src/i18n/de.ts` (KD-40), not
+in VitePress Markdown.
+
+```arc42
+:::decision
+id: adr-09-landing-in-spa
+title: Landing page lives in the Vue SPA at /#/, not in VitePress
+status: accepted
+date: 2026-09-23
+addresses: qg-contributor-friendliness, qg-performance-mobile, risk-pisa-window
+:::
+```
+
+## ADR-10: Hash-Based Routing for GitHub Pages Compatibility
+
+**Context:** GitHub Pages serves static files. HTML5 history API URLs (e.g. `/edugo/catalog`)
+result in 404 responses for deep links because GitHub Pages has no server-side rewrite rule.
+
+**Decision:** The Vue SPA uses `createWebHashHistory('/edugo/')`. All SPA routes are accessed
+as `/#/catalog`, `/#/apps`, `/#/catalog/:id`, `/#/apps/:id`.
+
+**Rationale:** Hash routing requires no server configuration. Deep links work correctly on
+first load. The trade-off is less clean URLs, but correct behavior outweighs aesthetics for a
+static deploy. A `404.html` redirect trick is fragile and adds complexity. Hash routing is the
+simplest correct solution.
+
+**Consequences:** All internal links and router-link `to` props use path-only strings (`/catalog`,
+not `https://...`). External links to specific views use the full hash URL
+(`https://mrsimpson.github.io/edugo/#/catalog`).
+
+```arc42
+:::decision
+id: adr-10-hash-routing
+title: Vue SPA uses hash-based routing for GitHub Pages static hosting
+status: accepted
+date: 2026-09-23
+addresses: con-github-pages, risk-mobile-perf-budget
+:::
+```

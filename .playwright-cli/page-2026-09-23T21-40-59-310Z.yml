@@ -1,0 +1,116 @@
+- generic [ref=e3]:
+  - link "Zum Inhalt springen" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - link "edugo" [ref=e6] [cursor=pointer]:
+      - /url: "#/"
+    - navigation "Hauptnavigation" [ref=e7]:
+      - link "Kompetenzkatalog" [ref=e8] [cursor=pointer]:
+        - /url: "#/catalog"
+      - link "Apps" [ref=e9] [cursor=pointer]:
+        - /url: "#/apps"
+      - link "GitHub" [ref=e10] [cursor=pointer]:
+        - /url: https://github.com/mrsimpson/edugo
+  - main [ref=e11]:
+    - generic [ref=e328]:
+      - generic [ref=e329]:
+        - heading "Kompetenzkarte" [level=1] [ref=e330]
+        - paragraph [ref=e331]:
+          - text: 6 von 6 Kompetenzen
+          - generic [ref=e332]: 6 Kompetenzen werden angezeigt
+      - generic [ref=e333]:
+        - complementary "Kompetenzkarte filtern" [ref=e335]:
+          - generic [ref=e336]:
+            - heading "Ansicht" [level=3] [ref=e337]
+            - generic [ref=e338] [cursor=pointer]:
+              - checkbox "Nur fehlende und teilweise abgedeckte Kompetenzen anzeigen" [ref=e339]
+              - generic [ref=e340]: Nur Lücken anzeigen
+              - generic [ref=e341]: (6)
+          - generic [ref=e342]:
+            - heading "KMK-Kompetenzbereich" [level=3] [ref=e343]
+            - group "KMK-Kompetenzbereiche filtern" [ref=e344]:
+              - generic [ref=e345] [cursor=pointer]:
+                - checkbox "Suchen, Verarbeiten und Aufbewahren (0 Kompetenzen)" [ref=e346]
+                - generic [ref=e347]: KMK 1 · Suchen
+                - generic [ref=e348]: "0"
+              - generic [ref=e349] [cursor=pointer]:
+                - checkbox "Kommunizieren und Kooperieren (3 Kompetenzen)" [ref=e350]
+                - generic [ref=e351]: KMK 2 · Kommunizieren
+                - generic [ref=e352]: "3"
+              - generic [ref=e353] [cursor=pointer]:
+                - checkbox "Produzieren und Präsentieren (2 Kompetenzen)" [ref=e354]
+                - generic [ref=e355]: KMK 3 · Produzieren
+                - generic [ref=e356]: "2"
+              - generic [ref=e357] [cursor=pointer]:
+                - checkbox "Schützen und sicher Agieren (1 Kompetenzen)" [ref=e358]
+                - generic [ref=e359]: KMK 4 · Schützen
+                - generic [ref=e360]: "1"
+              - generic [ref=e361] [cursor=pointer]:
+                - checkbox "Problemlösen und Handeln (2 Kompetenzen)" [ref=e362]
+                - generic [ref=e363]: KMK 5 · Problemlösen
+                - generic [ref=e364]: "2"
+              - generic [ref=e365] [cursor=pointer]:
+                - checkbox "Analysieren und Reflektieren (4 Kompetenzen)" [ref=e366]
+                - generic [ref=e367]: KMK 6 · Reflektieren
+                - generic [ref=e368]: "4"
+        - list "Kompetenzen" [ref=e370]:
+          - 'listitem "Kompetenz: Algorithmisches Denken durch schrittweise Problemzerlegung entwickeln" [ref=e371] [cursor=pointer]':
+            - article [aria-hidden] [ref=e372]:
+              - generic [ref=e373]: Fehlend
+              - heading [level=3] [ref=e375]: Algorithmisches Denken durch schrittweise Problemzerlegung entwickeln
+              - generic [ref=e376]:
+                - generic [ref=e377]: KMK 5 · Problemlösen
+                - generic [ref=e378]: KMK 6 · Reflektieren
+              - generic [ref=e379]:
+                - generic [ref=e380]: Noch kein Tool eingetragen
+                - generic [ref=e381]: Details →
+          - 'listitem "Kompetenz: Argumente erkennen, bewerten und eigene Urteile bilden" [ref=e382] [cursor=pointer]':
+            - article [aria-hidden] [ref=e383]:
+              - generic [ref=e384]: Teilweise abgedeckt
+              - heading [level=3] [ref=e386]: Argumente erkennen, bewerten und eigene Urteile bilden
+              - generic [ref=e387]:
+                - generic [ref=e388]: KMK 6 · Reflektieren
+                - generic [ref=e389]: KMK 2 · Kommunizieren
+              - generic [ref=e390]:
+                - generic [ref=e391]: 1 Tool eingetragen
+                - generic [ref=e392]: Details →
+          - 'listitem "Kompetenz: Digitale Medienprodukte erstellen und verantwortungsvoll veröffentlichen" [ref=e393] [cursor=pointer]':
+            - article [aria-hidden] [ref=e394]:
+              - generic [ref=e395]: Teilweise abgedeckt
+              - heading [level=3] [ref=e397]: Digitale Medienprodukte erstellen und verantwortungsvoll veröffentlichen
+              - generic [ref=e398]:
+                - generic [ref=e399]: KMK 3 · Produzieren
+                - generic [ref=e400]: KMK 4 · Schützen
+              - generic [ref=e401]:
+                - generic [ref=e402]: Noch kein Tool eingetragen
+                - generic [ref=e403]: Details →
+          - 'listitem "Kompetenz: Gemeinsam Texte planen, schreiben und überarbeiten" [ref=e404] [cursor=pointer]':
+            - article [aria-hidden] [ref=e405]:
+              - generic [ref=e406]: Fehlend
+              - heading [level=3] [ref=e408]: Gemeinsam Texte planen, schreiben und überarbeiten
+              - generic [ref=e409]:
+                - generic [ref=e410]: KMK 2 · Kommunizieren
+                - generic [ref=e411]: KMK 3 · Produzieren
+              - generic [ref=e412]:
+                - generic [ref=e413]: Noch kein Tool eingetragen
+                - generic [ref=e414]: Details →
+          - 'listitem "Kompetenz: Strukturiertes Feedback an Mitschülerinnen geben und annehmen" [ref=e415] [cursor=pointer]':
+            - article [aria-hidden] [ref=e416]:
+              - generic [ref=e417]: Fehlend
+              - heading [level=3] [ref=e419]: Strukturiertes Feedback an Mitschülerinnen geben und annehmen
+              - generic [ref=e420]:
+                - generic [ref=e421]: KMK 2 · Kommunizieren
+                - generic [ref=e422]: KMK 6 · Reflektieren
+              - generic [ref=e423]:
+                - generic [ref=e424]: Noch kein Tool eingetragen
+                - generic [ref=e425]: Details →
+          - 'listitem "Kompetenz: Wahrscheinlichkeiten durch digitale Simulation erfahren" [ref=e426] [cursor=pointer]':
+            - article [aria-hidden] [ref=e427]:
+              - generic [ref=e428]: Teilweise abgedeckt
+              - heading [level=3] [ref=e430]: Wahrscheinlichkeiten durch digitale Simulation erfahren
+              - generic [ref=e431]:
+                - generic [ref=e432]: KMK 5 · Problemlösen
+                - generic [ref=e433]: KMK 6 · Reflektieren
+              - generic [ref=e434]:
+                - generic [ref=e435]: 1 Tool eingetragen
+                - generic [ref=e436]: Details →
