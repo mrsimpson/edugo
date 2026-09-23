@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Lowercase hyphen-separated slug — also the filename without .md"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Tool or project name"
+    },
+    "capabilities": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "description": "One or more capability node IDs this entry addresses"
+    },
+    "dsgvo": {
+      "default": "unknown",
+      "description": "DSGVO trust level. Defaults to unknown if not specified.",
+      "type": "string",
+      "enum": [
+        "frontend-only",
+        "claimed-safe",
+        "unknown"
+      ]
+    },
+    "teaser": {
+      "description": "One German sentence — the discovery hook shown on the card. Example: \"Schüler entdecken, warum die 7 am häufigsten fällt.\"",
+      "type": "string",
+      "maxLength": 200
+    },
+    "source-url": {
+      "description": "URL to the source repository or project page",
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "capabilities",
+    "dsgvo"
+  ],
+  "additionalProperties": {}
+}

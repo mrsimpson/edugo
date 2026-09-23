@@ -23,6 +23,7 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Vision', link: '/docs/vision' },
+      { text: 'Beitragen', link: '/docs/contributing' },
       {
         text: 'Architecture',
         link: '/edugo/architecture/',
@@ -36,6 +37,7 @@ export default defineConfig({
         items: [
           { text: 'Home', link: '/' },
           { text: 'Vision', link: '/docs/vision' },
+          { text: 'Beitragen', link: '/docs/contributing' },
         ],
       },
     ],

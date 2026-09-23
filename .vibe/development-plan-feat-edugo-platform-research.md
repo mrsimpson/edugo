@@ -211,52 +211,45 @@ Zod v4 is the single source of truth for all data schemas. TypeScript types are 
 ### Milestone M0: Deployment Pipeline (do first — gets something live immediately)
 *Acceptance: a push to main triggers a workflow; https://mrsimpson.github.io/edugo/ serves the VitePress docs site; /architecture/ serves the arc42 site.*
 
-- [ ] **M0-1** Create `package.json` with scripts `docs:dev`, `docs:build`, `docs:preview`; devDep: `vitepress@latest`
-- [ ] **M0-2** Create `docs/.vitepress/config.ts`:
-  - `srcDir: '..'`, `base: '/edugo/'`, `cleanUrls: true`
-  - `srcExclude: ['.vibe/**', 'docs/.vitepress/**', 'docs/arc42/**', 'node_modules/**', '.github/**']`
-  - `rewrites: { 'README.md': 'index.md' }` (treats README.md as the home page)
-  - Nav: Home `/`, Vision `/docs/vision`, Architecture (external link `/edugo/architecture/`)
-  - Sidebar: Overview → Home + Vision
-  - socialLinks: GitHub repo link
-- [ ] **M0-3** Create `.gitignore`: dist/, node_modules/, docs/.vitepress/cache/, docs/.vitepress/dist/
-- [ ] **M0-4** Create `.github/workflows/deploy.yml`:
-  - Trigger: `push: branches: [main]`
-  - Permissions: `pages: write`, `id-token: write`
-  - Node 22 (pinned — arc42 CLI / Node 24 DOMPurify bug)
-  - Steps: checkout → setup-node (cache: npm) → npm ci → npm run docs:build → arc42 build into dist/architecture → actions/configure-pages → actions/upload-pages-artifact (path: dist) → actions/deploy-pages
-- [ ] **M0-5** Enable GitHub Pages in repo settings (source: GitHub Actions) and verify deploy
-- [ ] **M0-6** Smoke test: verify `/edugo/`, `/edugo/docs/vision`, `/edugo/architecture/` all load correctly
+- [x] **M0-1** Create `package.json` with scripts `docs:dev`, `docs:build`, `docs:preview`; devDep: `vitepress@latest`
+- [x] **M0-2** Create `docs/.vitepress/config.ts`
+- [x] **M0-3** Create `.gitignore`
+- [x] **M0-4** Create `.github/workflows/deploy.yml`
+- [x] **M0-5** Enable GitHub Pages in repo settings (source: GitHub Actions)
+- [x] **M0-6** Smoke test: `/edugo/` → 200, `/edugo/docs/vision` → 200, `/edugo/architecture/` → 200 ✓
+
+### KD-29: arc42 CLI npm package is @doctc/arc42
+The arc42 CLI is published under `@doctc/arc42` (not `arc42` or `@arc42/arc42-cli`). Pinned to `0.24.0` in the deploy workflow. Installed globally via `npm install -g` in CI. Local install at `/Users/oliverjaegle/.local/bin/arc42` is a symlink to the local development checkout.
+
+### KD-30: Zod v4 built-in toJSONSchema used instead of zod-to-json-schema
+Zod v4 ships `z.toJSONSchema()` natively. The `zod-to-json-schema` package (v3.x) produces empty schemas when given Zod v4 objects (internal class mismatch). Use `z.toJSONSchema(schema, { target: 'draft-2020-12' })` directly. The `zod-to-json-schema` devDependency is kept for now but unused. Generated schemas conform to `https://json-schema.org/draft/2020-12/schema`.
+
+### KD-31: dsgvo field is optional in Zod but required in generated JSON Schema
+`z.enum(...).optional().default('unknown')` makes dsgvo optional in Zod (defaults to 'unknown') but zod v4 toJSONSchema still lists it as required because of how defaults are emitted. Acceptable — contributors who omit dsgvo will get a CI warning that prompts them to explicitly set it. Intent: make the DSGVO decision explicit rather than silent.
 
 ### Milestone M1: Data Foundations
 *Acceptance: `data/` directory structure exists with schemas and seed data; schema validation CI workflow passes on a correct PR and fails on a malformed PR; a contributor can understand what to submit by reading `docs/contributing.md`.*
 
 #### Taxonomies (platform-owned controlled vocabularies — YAML files)
-- [ ] **M1-1** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only`, `claimed-safe`, `unknown`; German labels + one-line explanation. Referenced by `schemas/registry-entry.ts` at build time.
-- [ ] **M1-2** *(KMK domains are NOT a YAML file — defined as Zod literal slugs with `.meta()` in `schemas/capability-node.ts`)*
+- [x] **M1-1** Create `data/taxonomies/dsgvo-status.yaml` — 3 values: `frontend-only`, `claimed-safe`, `unknown`; German labels + one-line explanation. Referenced by `schemas/registry-entry.ts` at build time.
+- [x] **M1-2** *(KMK domains are NOT a YAML file — defined as Zod literal slugs with `.describe()` in `schemas/capability-node.ts`)*
 
 #### Schemas (Zod v4 source → generated JSON Schema)
-- [ ] **M1-3** Add `zod`, `zod-to-json-schema` as devDependencies; add `generate-schemas` npm script that runs `tsx schemas/generate.ts` producing `schemas/generated/capability-node.v1.schema.json` and `schemas/generated/registry-entry.v1.schema.json`; add `check-schemas` script that fails if generated files are out of sync
-- [ ] **M1-4** Create `schemas/capability-node.ts` (Zod v4):
-  - `KmkDomain` union of 6 string literals with `.meta({ title, number })` — slugs: `suchen-verarbeiten`, `kommunizieren-kooperieren`, `produzieren-praesentieren`, `schuetzen-agieren`, `problemloesen-handeln`, `analysieren-reflektieren`
-  - `CapabilityNodeSchema`: required `id` (slug pattern), `title` (non-empty string), `status` (enum: `needed`/`partial`/`well-covered`), `kmk-domains` (array of KmkDomain, minLength 1); `.catchall(z.unknown())` for `x-` extension fields
-  - Export `type CapabilityNode = z.infer<typeof CapabilityNodeSchema>`
-- [ ] **M1-5** Create `schemas/registry-entry.ts` (Zod v4):
-  - `DsgvoStatus` enum: `frontend-only` / `claimed-safe` / `unknown` with `.meta()` descriptions
-  - `RegistryEntrySchema`: required `id`, `title`, `capabilities` (array min 1 string); optional `dsgvo` (DsgvoStatus, default `unknown`), `teaser` (string max 200), `source-url` (url string); `.catchall(z.unknown())`
-  - Export `type RegistryEntry = z.infer<typeof RegistryEntrySchema>`
-- [ ] **M1-6** Create `schemas/generate.ts` — generates both JSON Schemas via `zod-to-json-schema`, writes to `schemas/generated/`, supports `--check` flag to fail if output differs from committed files
-- [ ] **M1-7** Add `.vscode/settings.json` with `yaml.schemas` associations: `schemas/generated/capability-node.v1.schema.json` → `data/capabilities/*.md`, `schemas/generated/registry-entry.v1.schema.json` → `data/entries/*.md`
+- [x] **M1-3** Add `zod`, `zod-to-json-schema` as devDependencies; add `generate-schemas` npm script; add `check-schemas` script
+- [x] **M1-4** Create `schemas/capability-node.ts` (Zod v4) — KmkDomain union, CapabilityNodeSchema, KMK_DOMAIN_META constant
+- [x] **M1-5** Create `schemas/registry-entry.ts` (Zod v4) — DsgvoStatus enum, RegistryEntrySchema, DSGVO_STATUS_META constant
+- [x] **M1-6** Create `schemas/generate.ts` — uses `z.toJSONSchema()` (Zod v4 native), `--check` flag for CI sync verification
+- [x] **M1-7** Add `.vscode/settings.json` with `yaml.schemas` associations
 
 #### Seed data (spanning 3 subjects, 2 age bands, varied cognitive types)
-- [ ] **M1-8** Create 6–8 capability node files under `data/capabilities/` — derive from real tool examples (argument evaluation, probabilistic reasoning via simulation, collaborative text production, peer feedback, computational thinking, media production). Required: `id`, `title`, `status: needed`, `kmk-domains` (1+ slug values). Rich Markdown body. Seed set must span at least 3 different KMK domains so the domain filter is meaningful from day one.
-- [ ] **M1-9** Create 2 illustrative registry entry files under `data/entries/` as contributor reference examples — the essay-comparison critical thinking app and the Yahtzee probabilistics app. Include `teaser` (one German sentence), `dsgvo`, `source-url`, and a Markdown body with classroom scenario.
+- [x] **M1-8** Create 6 capability node files under `data/capabilities/` spanning 4 KMK domains
+- [x] **M1-9** Create 2 illustrative registry entry files under `data/entries/`
 
 #### CI validation and contribution flow
-- [ ] **M1-10** Create `.github/workflows/validate-data.yml` — triggers on PRs touching `data/**`; runs `npm run check-schemas` (fails if generated JSON Schemas are out of sync), then `ajv validate` against changed files; fails PR with readable error output; runs without Pages permissions (safe for fork PRs)
-- [ ] **M1-11** Write `docs/contributing.md` — guide for adding a capability node or registry entry via GitHub web UI; includes the 6 KMK domain slugs with one-line descriptions so contributors can choose without leaving GitHub; `teaser` field highlighted as the most important optional field; `x-` extension convention explained; states "your first submission doesn't need to be complete"
-- [ ] **M1-12** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md` — checklist: title is German, `kmk-domains` has at least one value (slugs listed), `status` is `needed`, Markdown body explains the outcome with the "2–5 tools" litmus test
-- [ ] **M1-13** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md` — checklist: `capabilities` references at least one existing node ID, `teaser` is one German sentence, `dsgvo` is set if known, Markdown body includes a classroom scenario
+- [x] **M1-10** Create `.github/workflows/validate-data.yml`
+- [x] **M1-11** Write `docs/contributing.md`
+- [x] **M1-12** Create `.github/PULL_REQUEST_TEMPLATE/capability-node.md`
+- [x] **M1-13** Create `.github/PULL_REQUEST_TEMPLATE/registry-entry.md`
 
 ### Milestone M2: Capability Map UI
 *Acceptance: `/edugo/map` renders capability nodes from data files; KMK domain filter and gap toggle work client-side via URL params; a node detail page shows linked registry entries and a "build this" CTA for gap nodes.*

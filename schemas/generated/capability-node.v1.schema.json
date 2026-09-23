@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Lowercase hyphen-separated English slug — also the filename without .md"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "German learning outcome title — what students will be able to do"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "needed",
+        "partial",
+        "well-covered"
+      ],
+      "description": "Coverage status: needed = no tool exists, partial = some coverage, well-covered = good tools exist"
+    },
+    "kmk-domains": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "suchen-verarbeiten",
+            "description": "Suchen, Verarbeiten und Aufbewahren (KMK 1)"
+          },
+          {
+            "type": "string",
+            "const": "kommunizieren-kooperieren",
+            "description": "Kommunizieren und Kooperieren (KMK 2)"
+          },
+          {
+            "type": "string",
+            "const": "produzieren-praesentieren",
+            "description": "Produzieren und Präsentieren (KMK 3)"
+          },
+          {
+            "type": "string",
+            "const": "schuetzen-agieren",
+            "description": "Schützen und sicher Agieren (KMK 4)"
+          },
+          {
+            "type": "string",
+            "const": "problemloesen-handeln",
+            "description": "Problemlösen und Handeln (KMK 5)"
+          },
+          {
+            "type": "string",
+            "const": "analysieren-reflektieren",
+            "description": "Analysieren und Reflektieren (KMK 6)"
+          }
+        ]
+      },
+      "description": "One or more KMK Kompetenzrahmen domain slugs this outcome aligns to. Valid values: suchen-verarbeiten, kommunizieren-kooperieren, produzieren-praesentieren, schuetzen-agieren, problemloesen-handeln, analysieren-reflektieren"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "status",
+    "kmk-domains"
+  ],
+  "additionalProperties": {}
+}

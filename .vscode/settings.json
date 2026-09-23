@@ -1,0 +1,6 @@
+{
+  "yaml.schemas": {
+    "./schemas/generated/capability-node.v1.schema.json": "data/capabilities/*.md",
+    "./schemas/generated/registry-entry.v1.schema.json": "data/entries/*.md"
+  }
+}
