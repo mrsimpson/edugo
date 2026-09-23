@@ -1,25 +1,25 @@
-/**
- * CapabilityNodeDetailView — detail page for a single capability node (/map/:id).
- *
- * Shows: full Markdown body, KMK domain tags, linked registry entries,
- * and a "build this" CTA for gap nodes.
- */
+<!--
+  CapabilityNodeDetailView — detail page for a single capability node (/catalog/:id).
+
+  Shows: full Markdown body, KMK domain tags, linked registry entries,
+  and a "build this" CTA for gap nodes.
+-->
 <template>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Back link -->
     <router-link
       to="/catalog"
       class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 mb-6"
-      aria-label="Zurück zur Kompetenzkarte"
+      :aria-label="t.common.backTo(t.catalogDetail.backLabel)"
     >
-      ← Kompetenzkarte
+      {{ t.common.backTo(t.catalogDetail.backLabel) }}
     </router-link>
 
     <!-- Not found -->
     <div v-if="!node" class="text-center py-16 text-gray-500">
-      <p class="text-lg font-medium">Kompetenz nicht gefunden</p>
+      <p class="text-lg font-medium">{{ t.common.notFound(t.catalogDetail.entityName) }}</p>
       <router-link to="/catalog" class="mt-2 text-sm text-blue-600 underline">
-        Zur Kompetenzkarte
+        {{ t.common.goTo(t.catalogDetail.backLabel) }}
       </router-link>
     </div>
 
@@ -30,7 +30,7 @@
           <span
             class="mt-1 shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-sm font-medium"
             :class="statusClass"
-            :aria-label="`Status: ${statusLabel}`"
+            :aria-label="t.status.ariaLabel(statusLabel)"
           >
             {{ statusLabel }}
           </span>
@@ -41,7 +41,7 @@
         <div
           v-if="node['kmk-domains']?.length"
           class="mt-3 flex flex-wrap gap-2"
-          aria-label="KMK-Kompetenzbereiche"
+          :aria-label="t.catalog.filterKmkHeading"
         >
           <span
             v-for="domain in node['kmk-domains']"
@@ -57,13 +57,13 @@
       <div
         class="prose prose-sm max-w-none text-gray-800 mb-8"
         v-html="renderedBody"
-        aria-label="Beschreibung der Kompetenz"
+        :aria-label="t.catalogDetail.bodyAriaLabel"
       />
 
       <!-- Linked registry entries -->
       <section class="mb-8">
         <h2 class="text-lg font-semibold text-gray-900 mb-3">
-          Tools für diese Kompetenz
+          {{ t.catalogDetail.toolsSectionTitle }}
           <span class="text-sm font-normal text-gray-500 ml-1">({{ linkedEntries.length }})</span>
         </h2>
 
@@ -83,7 +83,7 @@
                 v-if="entry.dsgvo"
                 class="shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
                 :class="dsgvoClass(entry.dsgvo)"
-                :aria-label="`DSGVO-Status: ${entry.dsgvo}`"
+                :aria-label="t.catalogDetail.dsgvoAriaLabel(entry.dsgvo)"
               >
                 {{ dsgvoLabel(entry.dsgvo) }}
               </span>
@@ -97,19 +97,19 @@
           class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4"
         >
           <p class="text-sm font-medium text-amber-900">
-            {{ node.status === 'needed' ? 'Noch kein Tool für diese Kompetenz.' : 'Nur wenige Tools für diese Kompetenz.' }}
+            {{ node.status === 'needed' ? t.catalogDetail.gapCtaNoTools : t.catalogDetail.gapCtaFewTools }}
           </p>
           <p class="text-sm text-amber-700 mt-1">
-            Kennst du ein Tool oder baust gerade eines?
+            {{ t.catalogDetail.gapCtaBody }}
             <a
               :href="buildThisUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="underline font-medium"
             >
-              Trag es in die Registry ein
+              {{ t.catalogDetail.gapCtaLink }}
             </a>
-            — es dauert 5 Minuten.
+            — {{ t.catalogDetail.gapCtaSuffix }}
           </p>
         </div>
       </section>
@@ -124,10 +124,8 @@ import { useCapabilityNodes } from '../composables/useCapabilityNodes.js'
 import { useRegistryEntries } from '../composables/useRegistryEntries.js'
 import { KMK_DOMAIN_META, type KmkDomainValue } from '../../schemas/capability-node.js'
 import { DSGVO_STATUS_META, type DsgvoStatusValue } from '../../schemas/registry-entry.js'
+import { de as t } from '../i18n/de.js'
 
-// Simple Markdown renderer — headings, bold, paragraphs only
-// We avoid a full MD library dependency here; the body content is authored
-// and predictable enough for this minimal transform
 function renderMarkdown(md: string): string {
   return md
     .replace(/^### (.+)$/gm, '<h3 class="text-base font-semibold mt-4 mb-1">$1</h3>')
@@ -158,11 +156,7 @@ const statusClass = computed(() => ({
   'bg-green-100 text-green-700': node.value?.status === 'well-covered',
 }))
 
-const statusLabel = computed(() => ({
-  needed: 'Fehlend',
-  partial: 'Teilweise abgedeckt',
-  'well-covered': 'Gut abgedeckt',
-}[node.value?.status ?? 'needed']))
+const statusLabel = computed(() => t.status[node.value?.status ?? 'needed'] ?? '')
 
 function domainMeta(slug: string) {
   return KMK_DOMAIN_META[slug as KmkDomainValue] ?? null

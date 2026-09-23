@@ -38,7 +38,7 @@
         <!-- Problem tabs — auto-advance, large quote -->
         <div class="mb-12">
           <!-- Tab row -->
-          <div class="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Perspektiven">
+          <div class="flex flex-wrap gap-2 mb-6" role="tablist" :aria-label="copy.problems.tabsAriaLabel">
             <button
               v-for="(p, key) in personaMap"
               :key="key"
@@ -91,7 +91,7 @@
         <!-- Scroll cue -->
         <div class="text-slate-600 text-sm flex items-center gap-2">
           <span class="animate-bounce inline-block" aria-hidden="true">↓</span>
-          <span>Klingt das vertraut?</span>
+          <span>{{ copy.problems.scrollCue }}</span>
         </div>
       </div>
     </section>
@@ -127,7 +127,7 @@
       <div class="max-w-4xl mx-auto px-6">
 
         <!-- Tab row -->
-        <div class="flex flex-wrap justify-center gap-2 mb-10" role="tablist" aria-label="Was edugo für dich tut">
+        <div class="flex flex-wrap justify-center gap-2 mb-10" role="tablist" :aria-label="copy.solutions.tabsAriaLabel">
           <button
             v-for="(p, key) in personaMap"
             :key="key"
@@ -209,9 +209,9 @@
         </ol>
 
         <!-- Static capability map mockup -->
-        <div class="mt-16" role="img" aria-label="Vorschau der Kompetenzkarte">
+        <div class="mt-16" role="img" :aria-label="copy.solutions.mapPreviewAriaLabel">
           <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-4 text-center">
-            Kompetenzkarte — Vorschau
+            {{ copy.solutions.mapPreviewLabel }}
           </p>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
             <div

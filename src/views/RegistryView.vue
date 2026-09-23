@@ -1,24 +1,24 @@
-/**
- * RegistryView — the full solution registry (/registry).
- *
- * Design principles:
- * - 3.3: Filter state in URL params
- * - 2.5: Teaser from frontmatter, not body
- * - 3.2: View wires composables to components; no inline data loading
- */
+<!--
+  RegistryView — the full solution registry (/apps).
+
+  Design principles:
+  - 3.3: Filter state in URL params
+  - 2.5: Teaser from frontmatter, not body
+  - 3.2: View wires composables to components; no inline data loading
+-->
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Page header -->
     <div class="mb-6 flex items-start justify-between gap-4 flex-wrap">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Tool-Registry</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t.registry.pageTitle }}</h1>
         <p class="mt-1 text-sm text-gray-500">
-          {{ filteredEntries.length }} von {{ entries.length }} Tools
+          {{ t.registry.resultCount(filteredEntries.length, entries.length) }}
           <template v-if="filters.dsgvo.length > 0 || filters.capability">
-            gefiltert
+            {{ t.registry.resultCountFiltered }}
           </template>
           <span aria-live="polite" aria-atomic="true" class="sr-only">
-            {{ filteredEntries.length }} Tools werden angezeigt
+            {{ t.registry.resultLiveAnnouncement(filteredEntries.length) }}
           </span>
         </p>
       </div>
@@ -28,9 +28,9 @@
         target="_blank"
         rel="noopener noreferrer"
         class="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        aria-label="Neues Tool in die Registry eintragen"
+        :aria-label="t.registry.addButtonAriaLabel"
       >
-        + Tool eintragen
+        {{ t.registry.addButtonLabel }}
       </a>
     </div>
 
@@ -52,7 +52,7 @@
           v-if="filteredEntries.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
           role="list"
-          aria-label="Registry-Einträge"
+          :aria-label="t.registry.listAriaLabel"
         >
           <router-link
             v-for="entry in filteredEntries"
@@ -72,13 +72,13 @@
           role="status"
           aria-live="polite"
         >
-          <p class="text-lg font-medium">Keine Tools gefunden</p>
-          <p class="text-sm mt-1">Versuche, andere Filter zu wählen.</p>
+          <p class="text-lg font-medium">{{ t.registry.emptyHeading }}</p>
+          <p class="text-sm mt-1">{{ t.registry.emptyBody }}</p>
           <button
             class="mt-4 text-sm text-blue-600 underline"
             @click="resetFilters"
           >
-            Filter zurücksetzen
+            {{ t.common.filterReset }}
           </button>
         </div>
 
@@ -87,16 +87,16 @@
           v-if="!filters.dsgvo.length && !filters.capability && entries.length < 10"
           class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4"
         >
-          <p class="text-sm font-medium text-blue-900">Die Registry ist noch jung.</p>
+          <p class="text-sm font-medium text-blue-900">{{ t.registry.youngNoticeHeading }}</p>
           <p class="text-sm text-blue-700 mt-0.5">
-            Wenn du ein Tool kennst, das hier fehlt,
+            {{ t.registry.youngNoticeBody }}
             <a
               :href="newEntryUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="underline font-medium"
-            >trag es ein</a>.
-            Es dauert 5 Minuten.
+            >{{ t.registry.youngNoticeLink }}</a>.
+            {{ t.registry.youngNoticeSuffix }}
           </p>
         </div>
       </div>
@@ -110,6 +110,7 @@ import { useCapabilityNodes } from '../composables/useCapabilityNodes.js'
 import { useRegistryFilters } from '../composables/useRegistryFilters.js'
 import RegistryEntryCard from '../components/RegistryEntryCard.vue'
 import RegistryFilterPanel from '../components/RegistryFilterPanel.vue'
+import { de as t } from '../i18n/de.js'
 
 const { entries } = useRegistryEntries()
 const { nodes } = useCapabilityNodes()

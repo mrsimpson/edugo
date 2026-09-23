@@ -1,25 +1,25 @@
-/**
- * RegistryEntryDetailView — full detail page for a registry entry (/registry/:id).
- *
- * Shows: DSGVO badge with explanation, capability node links, full Markdown body,
- * source-url CTA. "Similar tools" = other entries sharing a capability node.
- */
+<!--
+  RegistryEntryDetailView — full detail page for a registry entry (/apps/:id).
+
+  Shows: DSGVO badge with explanation, capability node links, full Markdown body,
+  source-url CTA. "Similar tools" = other entries sharing a capability node.
+-->
 <template>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Back link -->
     <router-link
       to="/apps"
       class="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 mb-6"
-      aria-label="Zurück zur Tool-Registry"
+      :aria-label="t.common.backTo(t.registryDetail.backLabel)"
     >
-      ← Tool-Registry
+      {{ t.common.backTo(t.registryDetail.backLabel) }}
     </router-link>
 
     <!-- Not found -->
     <div v-if="!entry" class="text-center py-16 text-gray-500">
-      <p class="text-lg font-medium">Tool nicht gefunden</p>
+      <p class="text-lg font-medium">{{ t.common.notFound(t.registryDetail.entityName) }}</p>
       <router-link to="/apps" class="mt-2 text-sm text-blue-600 underline">
-        Zur Registry
+        {{ t.common.goTo(t.registryDetail.backLabel) }}
       </router-link>
     </div>
 
@@ -67,7 +67,9 @@
 
       <!-- Capability nodes -->
       <section class="mb-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-3">Adressierte Kompetenzen</h2>
+        <h2 class="text-base font-semibold text-gray-900 mb-3">
+          {{ t.registryDetail.capabilitiesSectionTitle }}
+        </h2>
         <div class="flex flex-wrap gap-2">
           <router-link
             v-for="cap in linkedCapabilities"
@@ -82,7 +84,7 @@
             />
             {{ cap.title }}
           </router-link>
-          <!-- Unresolved capability IDs (linked node not yet in data/) -->
+          <!-- Unresolved capability IDs -->
           <span
             v-for="id in unresolvedCapabilities"
             :key="id"
@@ -97,12 +99,14 @@
       <div
         class="prose prose-sm max-w-none text-gray-800 mb-8"
         v-html="renderedBody"
-        aria-label="Beschreibung des Tools"
+        :aria-label="t.registryDetail.bodyAriaLabel"
       />
 
       <!-- Similar tools -->
       <section v-if="similarEntries.length > 0" class="mb-8">
-        <h2 class="text-base font-semibold text-gray-900 mb-3">Ähnliche Tools</h2>
+        <h2 class="text-base font-semibold text-gray-900 mb-3">
+          {{ t.registryDetail.similarSectionTitle }}
+        </h2>
         <div class="flex flex-col gap-2">
           <router-link
             v-for="similar in similarEntries"
@@ -129,6 +133,7 @@ import { useRegistryEntries } from '../composables/useRegistryEntries.js'
 import { useCapabilityNodes } from '../composables/useCapabilityNodes.js'
 import { DSGVO_STATUS_META, type DsgvoStatusValue } from '../../schemas/registry-entry.js'
 import DsgvoBadge from '../components/DsgvoBadge.vue'
+import { de as t } from '../i18n/de.js'
 
 function renderMarkdown(md: string): string {
   return md

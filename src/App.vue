@@ -5,21 +5,21 @@
       v-if="!isLanding"
       class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between"
     >
-      <router-link to="/" class="text-xl font-bold text-gray-900">edugo</router-link>
+      <router-link to="/" class="text-xl font-bold text-gray-900">{{ t.nav.brand }}</router-link>
       <nav class="flex gap-6 text-sm font-medium" aria-label="Hauptnavigation">
         <router-link
           to="/catalog"
           class="text-gray-600 hover:text-gray-900"
           active-class="text-blue-600"
         >
-          Kompetenzkatalog
+          {{ t.nav.catalog }}
         </router-link>
         <router-link
           to="/apps"
           class="text-gray-600 hover:text-gray-900"
           active-class="text-blue-600"
         >
-          Tool-Registry
+          {{ t.nav.apps }}
         </router-link>
         <a
           href="https://github.com/mrsimpson/edugo"
@@ -27,7 +27,7 @@
           rel="noopener noreferrer"
           class="text-gray-600 hover:text-gray-900"
         >
-          GitHub
+          {{ t.nav.github }}
         </a>
       </nav>
     </header>
@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { de as t } from './i18n/de.js'
 
 const route = useRoute()
 const isLanding = computed(() => route.path === '/')

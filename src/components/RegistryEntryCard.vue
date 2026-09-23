@@ -1,16 +1,16 @@
-/**
- * RegistryEntryCard — recipe-card layout for a registry entry.
- *
- * The teaser is the primary display element — it tells the teacher what students
- * will DO, not what the tool IS. It must be visible without clicking.
- *
- * Design principle 2.5: teaser comes from frontmatter, never from body parsing.
- * Design principle 3.2: component receives data; does not fetch it.
- */
+<!--
+  RegistryEntryCard — recipe-card layout for a registry entry.
+
+  The teaser is the primary display element — it tells the teacher what students
+  will DO, not what the tool IS. It must be visible without clicking.
+
+  Design principle 2.5: teaser comes from frontmatter, never from body parsing.
+  Design principle 3.2: component receives data; does not fetch it.
+-->
 <template>
   <article
     class="bg-white rounded-lg border border-gray-200 p-4 flex flex-col gap-3 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer h-full"
-    :aria-label="`Tool: ${entry.title}`"
+    :aria-label="t.registry.entryCardAriaLabel(entry.title)"
   >
     <!-- Title + DSGVO badge -->
     <div class="flex items-start justify-between gap-2">
@@ -28,14 +28,14 @@
       „{{ entry.teaser }}"
     </p>
     <p v-else class="text-sm text-gray-400 italic">
-      Kein Teaser eingetragen.
+      {{ t.registry.entryNoTeaser }}
     </p>
 
     <!-- Capability nodes -->
     <div
       v-if="capabilityTitles.length"
       class="flex flex-wrap gap-1"
-      aria-label="Adressierte Kompetenzen"
+      :aria-label="t.registryDetail.capabilitiesSectionTitle"
     >
       <span
         v-for="cap in capabilityTitles"
@@ -51,8 +51,8 @@
       <span v-if="entry['source-url']" class="text-blue-600 truncate max-w-[70%]">
         {{ sourceDomain }}
       </span>
-      <span v-else class="text-gray-400">Kein Link eingetragen</span>
-      <span class="text-blue-600 font-medium shrink-0">Details →</span>
+      <span v-else class="text-gray-400">{{ t.registry.entryNoLink }}</span>
+      <span class="text-blue-600 font-medium shrink-0">{{ t.common.details }}</span>
     </div>
   </article>
 </template>
@@ -62,6 +62,7 @@ import { computed } from 'vue'
 import DsgvoBadge from './DsgvoBadge.vue'
 import type { RegistryEntryWithBody } from '../composables/useRegistryEntries.js'
 import type { CapabilityNodeWithBody } from '../composables/useCapabilityNodes.js'
+import { de as t } from '../i18n/de.js'
 
 const props = defineProps<{
   entry: RegistryEntryWithBody
@@ -75,7 +76,7 @@ const capabilityTitles = computed(() =>
       const node = props.nodes.find(n => n.id === id)
       return node ? { id, title: node.title } : { id, title: id }
     })
-    .slice(0, 3), // show max 3 on card to keep layout compact
+    .slice(0, 3),
 )
 
 const sourceDomain = computed(() => {
