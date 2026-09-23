@@ -56,8 +56,9 @@ files under `data/`, validated by JSON Schema on every PR.
 
 **DSGVO safety by design** — No server means no data collection surface. No third-party scripts
 in the build. UnoCSS and Vue are bundled; there are no CDN-loaded external dependencies in
-production. Frontend-only apps in the registry earn an automatic badge because the architecture
-structurally prevents data exfiltration.
+production. Frontend-only apps in the registry earn a no-backend badge because they have no
+server of their own that could store student data. A green DSGVO status additionally requires a
+verified absence of third-party requests (see the DSGVO concept in chapter 8).
 
 **Zero-server deployability** — GitHub Pages serves the static build output. The CI pipeline
 (`vp build` → GitHub Pages deploy action) is the only infrastructure. No secrets, no API keys,
