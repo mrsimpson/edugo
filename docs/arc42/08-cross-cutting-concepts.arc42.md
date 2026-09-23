@@ -13,10 +13,34 @@ entirely. There is no backend to store user data, no analytics scripts to includ
 authentication system to manage. This is not a configuration choice — it is a structural
 guarantee derived from the `con-no-server` constraint.
 
-For apps in the registry, the same principle applies: a frontend-only app with no backend
-cannot exfiltrate student data because there is nowhere to send it. The platform formalizes
-this as an automatic "no backend — structurally DSGVO-safe" badge awarded to any registry
-entry that declares `backend: none`.
+For apps in the registry, the same principle applies — but only partly. A frontend-only app
+has no server of its own that could store student data. That removes the largest data
+processing surface, but it does not prove the app is DSGVO-safe. The browser can still send
+personal data (at minimum the IP address, often also input) to third parties through several
+channels:
+
+- scripts, fonts, or stylesheets loaded from a CDN at runtime
+- analytics, error tracking, or telemetry built into bundled dependencies
+- direct calls from the browser to external APIs (LLM APIs, cloud storage, translation services)
+- embedded third-party content (videos, maps, social widgets)
+- the static host that serves the app and logs requests
+
+"No backend" is therefore a necessary condition, not a sufficient one. The platform separates
+the two claims:
+
+1. **No-backend badge** — the entry declares `backend: none`. The badge shows that the tool
+   runs no server of its own. It is labelled as self-declared until verified.
+2. **DSGVO status green** — requires `backend: none` *and* `external-requests: none` *and* a
+   verification. A self-declaration alone caps the status at amber.
+
+Verification is a network audit: a headless browser opens the tool's URL, performs the
+documented main interaction, and records every request to an origin other than the tool's own.
+The audit runs as a GitHub Actions job on the registry PR, so it needs no edugo server. Where
+the audit cannot run (for example, tools behind a login), a maintainer checks the tool
+manually and records the result in the entry.
+
+OPEN: exact audit tooling, which interactions count as "main interaction", and how often
+audits re-run to detect regressions after a tool changes.
 
 Implementation rule: no third-party scripts may be loaded at runtime. All dependencies must
 be bundled at build time. No CDN-hosted fonts, analytics, or widgets in production output.
@@ -66,12 +90,13 @@ decisions. This makes trust transparent and auditable. Four signals are displaye
 
 | Signal | Values | Source |
 |---|---|---|
-| DSGVO status | green / amber / red / unknown | `dsgvo` field in entry YAML; `backend: none` → automatic green |
+| DSGVO status | green / amber / red / unknown | `dsgvo` field in entry YAML; green requires `backend: none`, `external-requests: none` and a passed network audit or maintainer check (see DSGVO Safety by Design); self-declaration alone caps at amber |
 | Evidence level | anecdotal / community-validated / research-backed | `evidence` field; community-validated requires ≥3 "tried-this" signals |
 | Architecture compliance | badge or absent | `architecture-compliance: true` declared in entry YAML and verified by maintainer |
-| Frontend-only badge | present or absent | `backend: none` in entry YAML → automatic badge |
+| No-backend badge | verified / self-declared / absent | `backend: none` in entry YAML → badge marked "self-declared"; marked "verified" after a passed network audit. States only that the tool runs no server of its own — not that it is DSGVO-safe |
 
-No star ratings. No aggregate scores. Signals are factual and source-cited.
+No star ratings. No aggregate scores. Signals are factual and source-cited. Every signal shows
+whether it is self-declared or verified.
 
 ```arc42
 :::concept

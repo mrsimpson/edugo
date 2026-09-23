@@ -29,6 +29,30 @@ mitigation: Seed map from founding team with explicit versioning; establish RFC 
 :::
 ```
 
+## Trust Badge Overclaims DSGVO Safety
+
+The registry awards trust signals from metadata that contributors declare themselves. If
+`backend: none` alone produced a "structurally DSGVO-safe" badge, the platform would certify
+something it never checked. A frontend-only tool can still load CDN fonts, embed videos, or
+call an LLM API directly from the browser — each of which sends personal data to a third
+party. A single tool that carries the badge but leaks student data would damage edugo's core
+promise: honest, factual trust signals. Schools and data protection officers would stop
+relying on the badge, and teachers would lose the fast path the platform exists to provide.
+
+Mitigation: Separate the no-backend badge from the DSGVO status (see chapter 8). Mark every
+self-declared signal as such. Grant DSGVO green only after a network audit in CI or a
+documented maintainer check. Re-run audits periodically, because a tool can change after it
+was listed.
+
+```arc42
+:::risk
+id: risk-badge-overclaim
+title: Self-declared no-backend badge overclaims DSGVO safety
+severity: high
+mitigation: Separate no-backend badge from DSGVO status; label self-declared signals; require network audit or maintainer check for green; periodic re-audit
+:::
+```
+
 ## Moderation at Scale
 
 GitHub PR-based contribution works well for small contributor counts (< 50 active contributors).

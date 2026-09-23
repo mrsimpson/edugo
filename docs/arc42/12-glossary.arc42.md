@@ -78,25 +78,25 @@ definition: The five-level classification of educational tools by the type of st
 
 ## DSGVO Status
 
-A trust signal on each registry entry indicating its data protection compliance posture. Values are: green (verified compliant), amber (probably fine, unverified), red (known issues), unknown. A frontend-only app with no backend receives an automatic green badge.
+A trust signal on each registry entry indicating its data protection compliance posture. Values are: green (verified compliant), amber (probably fine, unverified), red (known issues), unknown. Green requires `backend: none`, `external-requests: none` and a passed network audit or maintainer check. A self-declaration alone caps the status at amber.
 
 ```arc42
 :::glossary-term
 id: gl-dsgvo-status
 title: DSGVO Status
-definition: A trust signal on each registry entry indicating its data protection compliance posture. Values: green (verified compliant), amber (probably fine, unverified), red (known issues), unknown. A frontend-only app with no backend receives an automatic green badge.
+definition: A trust signal on each registry entry indicating its data protection compliance posture. Values: green (verified compliant), amber (probably fine, unverified), red (known issues), unknown. Green requires backend:none, external-requests:none and a passed network audit or maintainer check; self-declaration alone caps at amber.
 :::
 ```
 
-## Frontend-only Badge
+## No-backend Badge
 
-An automatic trust badge awarded to any registry entry that declares `backend: none`. It signals that the tool has no server component and therefore cannot exfiltrate student data, making it structurally DSGVO-safe without configuration.
+A trust badge awarded to any registry entry that declares `backend: none`. It signals that the tool runs no server of its own. It does not prove DSGVO safety: the browser can still send data to CDNs, external APIs, or embedded third-party content. The badge shows "self-declared" until a network audit verifies it.
 
 ```arc42
 :::glossary-term
-id: gl-frontend-only-badge
-title: Frontend-only Badge
-definition: An automatic trust badge awarded to any registry entry that declares backend:none. It signals that the tool has no server component and therefore cannot exfiltrate student data — making it structurally DSGVO-safe.
+id: gl-no-backend-badge
+title: No-backend Badge
+definition: A trust badge awarded to any registry entry that declares backend:none. It signals that the tool runs no server of its own — not that it is DSGVO-safe, since the browser can still send data to third parties. Shown as self-declared until verified by a network audit.
 :::
 ```
 
