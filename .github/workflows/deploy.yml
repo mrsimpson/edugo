@@ -44,10 +44,10 @@ jobs:
         run: npm install -g @doctc/arc42@0.24.0
 
       - name: Install biz42 CLI
-        run: npm install -g @mrsimpson/biz42
+        run: npm install -g mrsimpson/biz42
 
       - name: Validate arc42 architecture docs
-        run: node scripts/arc42-validate.mjs
+        run: arc42 validate --strict
 
       - name: Build Vue app (owns dist/ root at /edugo/)
         run: npm run build
@@ -62,7 +62,7 @@ jobs:
         run: arc42 build --dir docs/arc42 --out dist/architecture --base /edugo/architecture/
 
       - name: Build biz42 business model (into dist/about/)
-        run: biz42 build --out dist/about --base /edugo/about/
+        run: biz42 --dir docs/biz42 build --out dist/about --base /edugo/about/
 
       - name: Publish JSON Schemas (into dist/schemas/)
         run: |
