@@ -9,6 +9,11 @@ docs/.vitepress/dist/
 .vitepress/cache/
 docs/.vitepress/cache/
 
+# Playwright
+test-results/
+playwright-report/
+.playwright-cli/
+
 # local env
 .env
 .env.local
