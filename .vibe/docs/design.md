@@ -54,25 +54,37 @@ No file in the repository may reference any account-specific secret, username, o
 
 ## 2. Data Model Principles
 
-### 2.1 Capability node identity
+### 2.1 The capability map is a structured wiki, not a taxonomy tree
 
-A capability node's `id` is its slug: lowercase, hyphen-separated, English, unique across the entire `data/capabilities/` directory. It is permanent — once published, a node ID is never renamed (entries reference it by ID). Deprecation is via a `deprecated: true` field and a `replaced-by` reference, never by deleting the file.
+Capability nodes are flat, well-tagged articles about learning outcomes — not nodes in a hierarchy. There is no `parent` field, no tree to navigate, no placement decisions to make. The "map" is the queryable space of all capability articles. Different users navigate different projections of the same flat dataset: the Contributor sees the gap view (status: needed), the Adopter filters by subject and age, the Navigator groups by KMK domain.
 
-### 2.2 Registry entry identity
+**Defect signal:** if the capability model requires a placement decision ("does this node belong under domain 5 or domain 6?"), the model is wrong — the node should carry both as facet values.
+
+### 2.2 Facets describe; they do not organize
+
+A capability node's facets (KMK domain alignment, subject areas, age range, active/passive type) are multi-value tags for discovery and navigation. They do not impose structure. A node may align to multiple KMK domains, multiple subjects, and a broad age range simultaneously. This reflects how cognitive outcomes actually work in education — they are not discrete, subject-locked, or age-bounded.
+
+**Defect signal:** if a facet field is single-value and mandatory, it is probably being used as a structural organizer rather than a discovery tag — reconsider whether it should be multi-value and optional.
+
+### 2.3 Capability node identity
+
+A capability node's `id` is its slug: lowercase, hyphen-separated, English, unique across `data/capabilities/`. It is permanent — once published, a node ID is never renamed (entries reference it by ID). Deprecation is via a `deprecated: true` field and a `replaced-by` reference, never by deleting the file.
+
+### 2.4 Registry entry identity
 
 A registry entry's `id` is the slug of the tool it describes. It is unique across `data/entries/`. The file name is `{id}.md`. If a tool is forked, the fork gets a new ID; the `forked-from` field records the parent ID. IDs are not namespaced by author — the tool's identity, not the author's identity, is what's permanent.
 
-### 2.3 Controlled vocabularies are files, not code
+### 2.5 Controlled vocabularies are files, not code
 
-The active/passive taxonomy, DSGVO status values, evidence levels, and KMK domain slugs are defined in `data/taxonomies/` as YAML files, not as TypeScript enums or hardcoded arrays in component files. Vue components read the taxonomy files at build time (via Vite's `import.meta.glob`). JSON Schema references them as `enum` arrays. A new taxonomy value is added by editing one taxonomy file — not by touching components or schemas simultaneously.
+The active/passive taxonomy, DSGVO status values, evidence levels, KMK domain slugs, and subject area slugs are defined in `data/taxonomies/` as YAML files — not as TypeScript enums or hardcoded arrays in component files. A new vocabulary value is added by editing one taxonomy file. No component or schema changes required unless the new value needs a new UI treatment.
 
-### 2.4 Schema evolution is additive
+### 2.6 Schema evolution is additive
 
-JSON Schema changes are always additive in minor versions: new optional fields are added, existing required fields are never removed. Removing a required field is a major schema version bump and requires a data migration script that backfills or removes the field across all existing entries. Schema files are versioned with a `schemaVersion` field inside the YAML frontmatter.
+New optional fields may be added at any time. Existing required fields are never removed — that is a major version bump requiring a data migration. The minimum required fields for a registry entry to be listed are: `id`, `title`, one `capabilities` reference, and `active-passive`. Everything else is optional. DSGVO defaults to `unknown` if absent — honest, not blocked.
 
-### 2.5 Markdown body is display content, not structured data
+### 2.7 Markdown body is display content, not structured data
 
-The Markdown body of a capability node or registry entry is freeform display content — it renders as rich text and is not parsed for structured values. All structured values (status, evidence, classification) live in the YAML frontmatter. A query or filter that depends on the Markdown body content is a design defect.
+The Markdown body of a capability node or registry entry is freeform display content. It renders as rich text and is never parsed for structured values. All queryable values live in the YAML frontmatter. A filter or query that depends on Markdown body content is a design defect.
 
 ---
 
@@ -92,7 +104,7 @@ The active filter set (selected capability domain, active/passive level, DSGVO s
 
 ### 3.4 Gap view is a filter preset, not a separate route
 
-The "gap view" (capability nodes with `status: needed` or `status: partial`) is a named filter preset that sets URL query parameters. It is not a separate page or route. A contributor who clicks "Show gaps" sees the capability map filtered to gap nodes — same component, same URL structure, different filter state.
+The "gap view" (capability nodes with `status: needed` or `status: partial`, with zero or few linked entries) is a named filter preset that sets URL query parameters. It is not a separate page or route. A contributor who clicks "Show gaps" sees the same capability map filtered differently — same component, same URL structure, different filter state. The gap view is the primary entry point for contributors; the full map is the primary entry point for adopters and navigators.
 
 ### 3.5 Trust signals are a separate concern from entry display
 
@@ -155,10 +167,10 @@ Feature branches: `feat/{short-description}`. Fix branches: `fix/{short-descript
 ### Add a new capability node
 
 1. Create `data/capabilities/{new-id}.md` with required YAML frontmatter (validated by schema on PR).
-2. Add German title and description in the Markdown body.
-3. Set `status: needed` initially — coverage status updates as entries are added.
-4. If it belongs under an existing node, set `parent: {parent-id}`.
-5. No code changes required.
+2. Write the German title and a rich Markdown body: what this outcome means, why it matters, example learning scenarios.
+3. Set `status: needed` initially — coverage updates as entries are linked.
+4. Tag with applicable facets: `kmk-domains` (multi-value), `subjects` (multi-value), `min-age`, `active-passive`.
+5. No code changes required. No placement decision required — there is no tree.
 
 ### Add a new registry entry
 
