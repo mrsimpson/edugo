@@ -24,13 +24,17 @@
     "docs/arc42/**/*.arc42.md": "node scripts/arc42-validate.mjs",
     "data/**/*.md": "tsx scripts/validate-data.ts",
     "schemas/**/*.ts": "tsx schemas/generate.ts --check",
-    "src/**/*.{ts,vue}": ["bash -c 'vue-tsc --noEmit --incremental false'", "oxlint --vue-plugin"]
+    "src/**/*.{ts,vue}": [
+      "bash -c 'vue-tsc --noEmit --incremental false'",
+      "oxlint --vue-plugin"
+    ]
   },
   "devDependencies": {
     "@types/node": "^26.6.2",
     "@unocss/preset-wind4": "^66.10.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "marked": "^15.0.12",
     "oxlint": "^1.85.0",
     "tsx": "^4.23.15",
     "typescript": "~5.7",

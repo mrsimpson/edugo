@@ -135,16 +135,13 @@ import { DSGVO_STATUS_META, type DsgvoStatusValue } from '../../schemas/registry
 import DsgvoBadge from '../components/DsgvoBadge.vue'
 import { de as t } from '../i18n/de.js'
 
+import { marked } from 'marked'
+
+// Configure marked for safe inline rendering — no external images, no raw HTML
+marked.use({ breaks: false, gfm: true })
+
 function renderMarkdown(md: string): string {
-  return md
-    .replace(/^### (.+)$/gm, '<h3 class="text-base font-semibold mt-4 mb-1">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-lg font-semibold mt-6 mb-2">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 class="text-xl font-bold mt-6 mb-2">$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n\n+/g, '</p><p class="mb-3">')
-    .replace(/^/, '<p class="mb-3">')
-    .concat('</p>')
+  return marked.parse(md) as string
 }
 
 const route = useRoute()
